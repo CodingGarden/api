@@ -10,6 +10,7 @@ const socketio = require('@feathersjs/socketio');
 
 const middlewares = require('./middlewares');
 const services = require('./services');
+const channels = require('./channels');
 
 const app = express(feathers());
 
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 });
 
 app.configure(services);
+app.configure(channels);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);

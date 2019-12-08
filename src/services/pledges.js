@@ -117,7 +117,10 @@ class PledgeService {
     if (params.headers['x-patreon-event'] === 'pledges:delete') {
       delete this.data.users[data.relationships.patron.data.id];
       delete this.data.pledgesByUserId[data.relationships.patron.data.id];
-      return 'OK';
+      return {
+        type: 'delete',
+        id: data.relationships.patron.data.id,
+      };
     }
     addPledge(data, this.data.pledgesByUserId, this.data.rewardIdsByCost);
     included.forEach((item) => {

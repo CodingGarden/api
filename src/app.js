@@ -1,16 +1,27 @@
-const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 
 require('dotenv').config();
 
-const middlewares = require('./middlewares');
-const pledges = require('./routes/pledges');
+const feathers = require('@feathersjs/feathers');
+const express = require('@feathersjs/express');
+const socketio = require('@feathersjs/socketio');
 
-const app = express();
+const middlewares = require('./middlewares');
+const services = require('./services');
+
+const app = express(feathers());
+
+app.configure(express.rest());
+app.configure(socketio());
 
 app.use(morgan('common'));
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.feathers.rawBody = buf;
+  }
+}));
 app.use(helmet());
 app.use(cors());
 
@@ -20,7 +31,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/pledges', pledges);
+app.configure(services);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);

@@ -1,22 +1,11 @@
 {
-  "version": 2,
+  "version": 1,
   "name": "patreon",
-  "builds": [
-    {
-      "src": "src/index.js",
-      "use": "@now/node-server"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/.*",
-      "dest": "src/index.js"
-    }
-  ],
   "env": {
     "NODE_ENV": "production",
     "PATREON_ACCESS_TOKEN": "@patreon-access-token",
-    "PATREON_CAMPAIGN_ID": "@patreon-campaign-id"
+    "PATREON_CAMPAIGN_ID": "@patreon-campaign-id",
+    "PATREON_WEBHOOK_SECRET": "@patreon-webhook-secret"
   },
   "alias": [
     "patreon.coding.garden"

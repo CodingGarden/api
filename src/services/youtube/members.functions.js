@@ -29,7 +29,7 @@ async function getMemberData() {
       },
     },
     sponsorsOptions: {
-      pageSize: 3,
+      pageSize: 100,
       filter: {},
     },
   }, {

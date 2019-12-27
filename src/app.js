@@ -17,7 +17,8 @@ const app = express(feathers());
 app.configure(express.rest());
 app.configure(socketio());
 
-app.use(morgan('common'));
+app.set('trust proxy', 'loopback');
+app.use(morgan('[:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]'));
 app.use(express.json({
   verify: (req, res, buf) => {
     req.feathers.rawBody = buf;
@@ -28,7 +29,7 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄'
+    message: '🌱🦄🌈✨👋🌎🌍🌏✨🌈🦄🌱'
   });
 });
 

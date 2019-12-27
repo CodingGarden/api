@@ -37,6 +37,10 @@ app.configure(services);
 app.configure(channels);
 
 app.use(middlewares.notFound);
+app.use((error, req, res, next) => {
+  console.error(error);
+  next(error);
+});
 app.use(middlewares.errorHandler);
 
 module.exports = app;

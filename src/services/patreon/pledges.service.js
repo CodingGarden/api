@@ -29,6 +29,7 @@ class PledgeService {
   }
 
   async create(body, params) {
+    if (!this.data) return { success: true };
     if (!verifySecret(params.rawBody, params.headers['x-patreon-signature'])) throw new Error('Invalid signature.');
     const { data, included } = body;
     if (params.headers['x-patreon-event'] === 'pledges:delete') {

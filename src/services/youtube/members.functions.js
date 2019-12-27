@@ -75,7 +75,7 @@ async function getMembers() {
     const tier = tiersById[member.tierId];
     const user = {
       id: member.externalChannelId,
-      name: channelsById[member.externalChannelId].title,
+      name: channelsById[member.externalChannelId].title.split(' ')[0],
       level: {
         level_id: tier.id,
         amount_cents: tier.pricingLevelId / 10000,

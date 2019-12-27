@@ -1,16 +1,23 @@
-# Patreon Pledges API
+# Coding Garden API
 
-A simple API to list the active pledges for a given patreon campaign.
+An API for the Coding Garden YouTube / Twitch channel.
 
 ## Endpoints
 
-`GET /pledges`
+* `GET /patreon/pledges`
+* `GET /youtube/members`
 
-## Setup
+## Configuration
 
 ```sh
 npm install
-cp .env.sample .env # update with your patreon access token and campaign id
+cp .env.sample .env # update accordingly
+```
+
+Copy `src/services/youtube/members.config.sample.js` to `src/services/youtube/members.config.js` and update accordingly. Needed values can be found by inspecting network traffic in the YouTube Dashboard: https://studio.youtube.com/channel/channel-id-here/monetization/memberships.
+
+```sh
+cp src/services/youtube/members.config.sample.js src/services/youtube/members.config.js
 ```
 
 ## Lint
@@ -23,10 +30,4 @@ npm run lint
 
 ```sh
 npm run dev
-```
-
-## Package Audit with snyk
-
-```sh
-npm run audit
 ```

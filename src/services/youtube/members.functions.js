@@ -16,8 +16,65 @@ const {
 const studioBaseURL = 'https://studio.youtube.com/youtubei/v1';
 const streamLabsURL = 'https://sockets.streamlabs.com';
 
+async function getChannelFacts() {
+  const {
+    data
+  } = await axios.post(`${studioBaseURL}/creator/get_channel_dashboard?alt=json&key=${key}`, {
+    dashboardParams: {
+      channelId: externalChannelId,
+      factsAnalyticsParams: {
+        nodes: [{
+          key: 'DASHBOARD_FACT_ANALYTICS_LIFETIME_SUBSCRIBERS',
+          value: {
+            query: {
+              dimensions: [],
+              metrics: [{
+                type: 'SUBSCRIBERS_NET_CHANGE'
+              }],
+              restricts: [{
+                dimension: {
+                  type: 'USER'
+                },
+                inValues: [externalChannelId]
+              }],
+              orders: [],
+              timeRange: {
+                unboundedRange: {}
+              },
+              currency: 'USD',
+              returnDataInNewFormat: true,
+              limitedToBatchedData: false
+            }
+          }
+        }],
+        connectors: []
+      },
+      videoSnapshotAnalyticsParams: {
+        nodes: [],
+        connectors: []
+      },
+      cardProducerTimeout: 'CARD_PRODUCER_TIMEOUT_SHORT'
+    },
+    context,
+  }, {
+    headers,
+    referrer,
+  });
+  let info = null;
+  data.cards.find((card) => {
+    info = card.body.basicCard.item.channelFactsItem.channelFactsData.results.find(result => result.key === 'DASHBOARD_FACT_ANALYTICS_LIFETIME_SUBSCRIBERS');
+    return info;
+  });
+  const subscribers = info.value.resultTable.metricColumns[0].counts.values[0];
+  return {
+    subscribers,
+  };
+}
+
 async function getMemberData() {
-  const { data } = await axios.post(`${studioBaseURL}/sponsors/creator_sponsorships_data?alt=json&key=${key}`, {
+  const {
+    data
+  } = await axios.post(`${studioBaseURL}/sponsors/creator_sponsorships_data?alt=json&key=${key}`, {
     context,
     externalChannelId,
     mask: {
@@ -43,7 +100,9 @@ async function getMemberData() {
 }
 
 async function getChannelData(channelIds) {
-  const { data } = await axios.post(`${studioBaseURL}/creator/get_creator_channels?alt=json&key=${key}`, {
+  const {
+    data
+  } = await axios.post(`${studioBaseURL}/creator/get_creator_channels?alt=json&key=${key}`, {
     context,
     channelIds,
     mask: {
@@ -66,7 +125,10 @@ const daysToMilliseconds = days => (60 * 60 * 24 * days * 1000);
 const emojiRegex = new RegExp(['💧', '🌻', '💩', '🥑', '🚜'].join('|'), 'g');
 
 async function getMembers() {
-  const { tiers, memberData } = await getMemberData();
+  const {
+    tiers,
+    memberData
+  } = await getMemberData();
   const channelData = await getChannelData(memberData.map(m => m.externalChannelId));
   const channelsById = channelData.reduce(reduceById('channelId'), {});
   const tiersById = tiers.reduce(reduceById('id'), {});
@@ -115,5 +177,6 @@ function listenForMembers(app) {
 
 module.exports = {
   getMembers,
-  listenForMembers
+  listenForMembers,
+  getChannelFacts,
 };

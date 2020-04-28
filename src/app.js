@@ -41,6 +41,6 @@ app.use((error, req, res, next) => {
   console.error(error);
   next(error);
 });
-app.use(middlewares.errorHandler);
+app.use(express.errorHandler());
 
 module.exports = app;

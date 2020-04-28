@@ -6,6 +6,7 @@ An API for the Coding Garden YouTube / Twitch channel.
 
 * `GET /patreon/pledges`
 * `GET /youtube/members`
+* `GET /youtube/stats`
 
 ## Configuration
 

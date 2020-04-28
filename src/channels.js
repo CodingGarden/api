@@ -7,8 +7,5 @@ module.exports = function channels(app) {
     app.channel('anonymous').join(connection);
   });
 
-  app.publish(() => {
-    console.log('Publishing all events to all users.');
-    return app.channel('anonymous');
-  });
+  app.publish(() => app.channel('anonymous'));
 };

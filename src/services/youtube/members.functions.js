@@ -1,9 +1,4 @@
 const axios = require('axios');
-const io = require('socket.io-client');
-
-const {
-  STREAMLABS_SOCKET_TOKEN: socketToken
-} = process.env;
 
 const {
   key,
@@ -14,7 +9,6 @@ const {
 } = require('./members.config');
 
 const studioBaseURL = 'https://studio.youtube.com/youtubei/v1';
-const streamLabsURL = 'https://sockets.streamlabs.com';
 
 async function getChannelFacts() {
   const {
@@ -157,26 +151,7 @@ async function getMembers() {
   };
 }
 
-function listenForMembers(app) {
-  const streamlabs = io(`${streamLabsURL}?token=${socketToken}`, {
-    transports: ['websocket']
-  });
-  streamlabs.on('connect', () => {
-    console.log('connected to streamlabs');
-  });
-  streamlabs.on('connect_error', (error) => {
-    console.log('error connecting to streamlabs');
-    console.error(error);
-  });
-  streamlabs.on('event', (eventData) => {
-    if (eventData.for === 'youtube_account' && eventData.type === 'subscription') {
-      app.service('youtube/members').create({});
-    }
-  });
-}
-
 module.exports = {
   getMembers,
-  listenForMembers,
   getChannelFacts,
 };

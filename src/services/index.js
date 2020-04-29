@@ -5,9 +5,9 @@ const MemberService = require('./youtube/members.service');
 const StatsService = require('./youtube/stats.service');
 const TwitchChatService = require('./twitch/chat.service');
 const QuestionsService = require('./qna/questions.service');
+const TwitchSubsService = require('./twitch/subs.service');
 
 const unAuthorizedMessage = 'Un-Authorized. 👮🚨 This event will be reported to the internet police. 🚨👮';
-const notFoundMessage = '🤖 These are not the endpoints you are looking for. 🤖';
 
 const internalOnly = async (context) => {
   if (!context.params.provider) return context;
@@ -23,6 +23,7 @@ module.exports = function configure(app) {
   app.use('patreon/pledges', new PledgeService());
   app.use('youtube/stats', new StatsService(app));
   app.use('youtube/members', new MemberService(app));
+  app.use('twitch/subs', new TwitchSubsService());
   app.use('twitch/chat', new TwitchChatService(app));
   app.service('twitch/chat').hooks({
     before: {

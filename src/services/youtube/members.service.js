@@ -1,12 +1,10 @@
 const {
-  getMembers,
-  listenForMembers
+  getMembers
 } = require('./members.functions');
 
 class MemberService {
-  constructor(app) {
+  constructor() {
     this.data = null;
-    listenForMembers(app);
   }
 
   async find(params) {

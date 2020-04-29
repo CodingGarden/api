@@ -11,6 +11,7 @@ const socketio = require('@feathersjs/socketio');
 const middlewares = require('./middlewares');
 const services = require('./services');
 const channels = require('./channels');
+const listenStreamlabs = require('./streamlabs');
 
 const app = express(feathers());
 
@@ -35,6 +36,7 @@ app.get('/', (req, res) => {
 
 app.configure(services);
 app.configure(channels);
+app.configure(listenStreamlabs);
 
 app.use(middlewares.notFound);
 app.use((error, req, res, next) => {

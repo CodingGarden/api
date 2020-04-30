@@ -1,19 +1,27 @@
 const axios = require('axios');
 
 const {
-  TWITCH_SUB_OAUTH_TOKEN
+  TWITCH_SUB_OAUTH_TOKEN,
+  TWITCH_SUB_CLIENT_ID,
 } = process.env;
 
 // {
-//   "broadcaster_id": "413856795",
-//   "broadcaster_name": "CodingGarden",
-//   "gifter_id": "112793979",
-//   "gifter_name": "PixelogicDev",
-//   "is_gift": true,
-//   "plan_name": "Wall Flower",
-//   "tier": "1000",
-//   "user_id": "465598376",
-//   "user_name": "mynameisinfi"
+// created_at": "2020-04-28T11:37:28Z",
+// "_id": "e60aaaf329e3a89a1cfb0cf33dd848205893dd20",
+// "sub_plan": "3000",
+// "sub_plan_name": "Avocado",
+// "is_gift": false,
+// "user": {
+//   "display_name": "CodingGarden",
+//   "type": "user",
+//   "bio": "",
+//   "created_at": "2019-02-02T04:46:04Z",
+//   "updated_at": "2020-04-29T20:05:08Z",
+//   "name": "codinggarden",
+//   "_id": "413856795",
+//   "logo": "https://static-cdn.jtvnw.net/jtv_user_pictures/611cac54-34e0-4c2a-851b-66e5ea2b3f81-profile_image-300x300.png"
+// },
+// "sender": null
 // },
 
 // {
@@ -26,7 +34,7 @@ const {
 //   }
 // },
 
-const apiUrl = 'https://api.twitch.tv/helix/subscriptions?broadcaster_id=413856795&first=100';
+const apiUrl = 'https://api.twitch.tv/kraken/channels/413856795/subscriptions?limit=100';
 
 const tiersToCents = {
   1000: 499,
@@ -40,30 +48,43 @@ const levels = {
   3000: 'Avocado',
 };
 
+async function getSubsPage(offset = 0, all = []) {
+  const { data: { _total, subscriptions } } = await axios
+    .get(`${apiUrl}&offset=${offset}`, {
+      headers: {
+        authorization: `OAuth ${TWITCH_SUB_OAUTH_TOKEN}`,
+        'Client-ID': TWITCH_SUB_CLIENT_ID,
+        Accept: 'application/vnd.twitchtv.v5+json',
+      }
+    });
+  all = all.concat(subscriptions);
+  if (all.length === _total) return all;
+  return getSubsPage(offset + 100, all);
+}
+
 async function getSubs() {
-  const { data: { data } } = await axios.get(apiUrl, {
-    headers: {
-      authorization: `Bearer ${TWITCH_SUB_OAUTH_TOKEN}`,
-    }
-  });
+  const data = await getSubsPage();
   const usersById = {};
   const users = data.map(({
-    user_id: id,
-    user_name: name,
-    tier,
+    sub_plan: tier,
+    created_at,
+    user: {
+      _id: id,
+      name,
+    },
   }) => {
     const user = {
       id,
       name,
       level: {
         amount_cents: tiersToCents[tier],
-        created_at: new Date(),
+        created_at: new Date(created_at),
         level_id: tier,
       },
     };
     usersById[id] = user;
     return user;
-  });
+  }).filter((user) => user.id !== '413856795');
   return {
     users,
     levels,

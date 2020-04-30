@@ -15,18 +15,30 @@ const internalOnly = async (context) => {
 };
 
 const verifyAPIKey = async (context) => {
-  if (context.params.headers['X-API-KEY'] === process.env.CLIENT_API_KEY) return context;
+  if ((context.params.query && context.params.query.key === process.env.CLIENT_API_KEY)
+  || context.params.headers['X-API-KEY'] === process.env.CLIENT_API_KEY) return context;
   throw new FeathersError(unAuthorizedMessage, 'un-authorized', 401, 'UnAuthorizedError', null);
 };
 
 module.exports = function configure(app) {
+  const apiKeyFindHooks = {
+    before: {
+      find: [verifyAPIKey],
+    }
+  };
   app.use('patreon/pledges', new PledgeService());
+  app.service('patreon/pledges').hooks(apiKeyFindHooks);
   app.use('youtube/stats', new StatsService(app));
+  app.service('youtube/stats').hooks(apiKeyFindHooks);
   app.use('youtube/members', new MemberService(app));
+  app.service('youtube/members').hooks(apiKeyFindHooks);
   app.use('twitch/subs', new TwitchSubsService());
+  app.service('twitch/subs').hooks(apiKeyFindHooks);
   app.use('twitch/chat', new TwitchChatService(app));
+  app.service('twitch/chat').hooks(apiKeyFindHooks);
   app.service('twitch/chat').hooks({
     before: {
+      find: [verifyAPIKey],
       create: [internalOnly],
       remove: [internalOnly],
     },
@@ -34,6 +46,7 @@ module.exports = function configure(app) {
   app.use('qna/questions', new QuestionsService());
   app.service('qna/questions').hooks({
     before: {
+      find: [verifyAPIKey],
       create: [verifyAPIKey],
       remove: [verifyAPIKey],
     },

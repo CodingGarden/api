@@ -24,6 +24,9 @@ class VoxPopuliService {
       archived: {
         $ne: true,
       },
+      created_at: {
+        $gt: new Date('2020-05-20'),
+      },
     });
     const questions = [];
     const ideas = [];

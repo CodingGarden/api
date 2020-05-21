@@ -4,7 +4,8 @@ const {
   listenChats
 } = require('./chat.functions');
 const {
-  twitchChats
+  twitchChats,
+  counter,
 } = require('../../db');
 
 class TwitchService {
@@ -31,6 +32,16 @@ class TwitchService {
   }
 
   async create(message) {
+    if (message.message.match(/^!(ask|idea|submit)/)) {
+      const count = await counter.findOneAndUpdate({
+        name: 'question',
+      }, {
+        $inc: { value: 1 }
+      }, {
+        upsert: true,
+      });
+      message.num = count.value;
+    }
     const created = await twitchChats.insert(message);
     return created;
   }

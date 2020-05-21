@@ -4,7 +4,7 @@ const PledgeService = require('./patreon/pledges.service');
 const MemberService = require('./youtube/members.service');
 const StatsService = require('./youtube/stats.service');
 const TwitchChatService = require('./twitch/chat.service');
-const QuestionsService = require('./qna/questions.service');
+const VoxPopuliService = require('./vox/populi.service');
 const TwitchSubsService = require('./twitch/subs.service');
 
 const unAuthorizedMessage = 'Un-Authorized. 👮🚨 This event will be reported to the internet police. 🚨👮';
@@ -35,7 +35,6 @@ module.exports = function configure(app) {
   app.use('twitch/subs', new TwitchSubsService());
   app.service('twitch/subs').hooks(apiKeyFindHooks);
   app.use('twitch/chat', new TwitchChatService(app));
-  app.service('twitch/chat').hooks(apiKeyFindHooks);
   app.service('twitch/chat').hooks({
     before: {
       find: [verifyAPIKey],
@@ -43,11 +42,10 @@ module.exports = function configure(app) {
       remove: [internalOnly],
     },
   });
-  app.use('qna/questions', new QuestionsService());
-  app.service('qna/questions').hooks({
+  app.use('vox/populi', new VoxPopuliService(app));
+  app.service('vox/populi').hooks({
     before: {
-      find: [verifyAPIKey],
-      create: [verifyAPIKey],
+      create: [internalOnly],
       remove: [verifyAPIKey],
     },
   });

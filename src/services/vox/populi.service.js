@@ -45,10 +45,13 @@ class VoxPopuliService {
         const value = args.join(' ');
         message.content = value;
         if (command === '!ask') {
+          message.type = 'questions';
           questions.push(message);
         } else if (command === '!idea') {
+          message.type = 'ideas';
           ideas.push(message);
         } else if (command === '!submit') {
+          message.type = 'submissions';
           submissions.push(message);
         }
       } else if (command.match(/^!(comment|upvote)/)) {

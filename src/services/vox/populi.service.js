@@ -32,6 +32,12 @@ class VoxPopuliService {
         $gt: new Date('2020-05-20'),
       },
     });
+    const names = [...new Set(messages.map((user) => user.username))];
+    const users = await this.app.service('twitch/users').find({
+      query: {
+        names,
+      }
+    });
     const questions = [];
     const ideas = [];
     const submissions = [];
@@ -42,10 +48,6 @@ class VoxPopuliService {
       const command = args.shift();
       if (command.match(topLevelRegex)) {
         if (!message.num) return;
-        comments[message.num] = comments[message.num] || [];
-        upvotes[message.num] = upvotes[message.num] || [];
-        message.comments = comments[message.num];
-        message.upvotes = upvotes[message.num];
         const value = args.join(' ');
         message.content = value;
         if (command === '!ask') {
@@ -64,16 +66,26 @@ class VoxPopuliService {
           comments[num].push(message);
         } else if (command === '!upvote') {
           upvotes[num] = upvotes[num] || [];
-          upvotes[num].push(message.display_name);
+          upvotes[num].push(message.username);
           upvotes[num] = [...new Set(upvotes[num])];
         }
       }
     });
 
+    const setProps = (item) => {
+      item.comments = comments[item.num] || [];
+      item.upvotes = upvotes[item.num] || [];
+    };
+
+    questions.forEach(setProps);
+    ideas.forEach(setProps);
+    submissions.forEach(setProps);
+
     return {
       questions,
       ideas,
       submissions,
+      users,
     };
   }
 
@@ -92,6 +104,8 @@ class VoxPopuliService {
   }
 
   async create(message) {
+    const user = await this.app.service('twitch/users').get(message.username);
+    message.user = user;
     return message;
   }
 }

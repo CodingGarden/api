@@ -6,6 +6,7 @@ const StatsService = require('./youtube/stats.service');
 const TwitchChatService = require('./twitch/chat.service');
 const VoxPopuliService = require('./vox/populi.service');
 const TwitchSubsService = require('./twitch/subs.service');
+const TwitchUsersService = require('./twitch/users.service');
 
 const unAuthorizedMessage = 'Un-Authorized. 👮🚨 This event will be reported to the internet police. 🚨👮';
 
@@ -40,6 +41,14 @@ module.exports = function configure(app) {
       find: [verifyAPIKey],
       create: [internalOnly],
       remove: [internalOnly],
+    },
+  });
+  app.use('twitch/users', new TwitchUsersService(app));
+  app.service('twitch/users').hooks({
+    before: {
+      get: [verifyAPIKey],
+      find: [verifyAPIKey],
+      create: [internalOnly],
     },
   });
   app.use('vox/populi', new VoxPopuliService(app));

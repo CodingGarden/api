@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 const { sub } = require('date-fns');
 const {
   listenChats

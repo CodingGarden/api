@@ -3,11 +3,15 @@ const {
   twitchChats,
 } = require('../../db');
 
+const voxRegex = /^!(ask|idea|submit|comment|upvote)/;
+const topLevelRegex = /^!(ask|idea|submit)/;
+const commentUpvoteRegex = /^!(comment|upvote)/;
+
 class VoxPopuliService {
   constructor(app) {
     this.app = app;
     app.service('twitch/chat').on('created', (message) => {
-      if (message.message.match(/^!(ask|idea|submit|comment|upvote)/)) {
+      if (message.message.match(voxRegex)) {
         app.service('vox/populi').create(message);
       }
     });
@@ -16,7 +20,7 @@ class VoxPopuliService {
   async find() {
     const messages = await twitchChats.find({
       message: {
-        $regex: /^!(ask|idea|submit|comment|upvote)/
+        $regex: voxRegex,
       },
       deleted_at: {
         $eq: null,
@@ -36,7 +40,7 @@ class VoxPopuliService {
     messages.forEach((message) => {
       const args = message.message.split(' ');
       const command = args.shift();
-      if (command.match(/^!(ask|idea|submit)/)) {
+      if (command.match(topLevelRegex)) {
         if (!message.num) return;
         comments[message.num] = comments[message.num] || [];
         upvotes[message.num] = upvotes[message.num] || [];
@@ -51,7 +55,7 @@ class VoxPopuliService {
         } else if (command === '!submit') {
           submissions.push(message);
         }
-      } else if (command.match(/^!(comment|upvote)/)) {
+      } else if (command.match(commentUpvoteRegex)) {
         const num = (args.shift() || '').replace('#', '');
         if (!num || isNaN(num)) return;
         if (command === '!comment') {

@@ -7,5 +7,11 @@ module.exports = function channels(app) {
     app.channel('anonymous').join(connection);
   });
 
-  app.publish(() => app.channel('anonymous'));
+  app.publish((data, hook) => {
+    const all = [];
+    if (hook.path === 'vox/populi') {
+      all.push(app.channel('anonymous'));
+    }
+    return all;
+  });
 };

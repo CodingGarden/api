@@ -5,6 +5,7 @@ const twitchAPI = axios.create({
   headers: {
     'Client-ID': process.env.TWITCH_SUB_CLIENT_ID,
     Accept: 'application/vnd.twitchtv.v5+json',
+    Authorization: `Bearer ${process.env.TWITCH_SUB_OAUTH_TOKEN}`
   },
 });
 

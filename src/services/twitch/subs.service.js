@@ -97,6 +97,14 @@ class TwitchSubs {
     this.data = null;
   }
 
+  async get(id) {
+    this.data = this.data || await getSubs();
+    if (Object.prototype.hasOwnProperty.call(this.data.usersById, id)) {
+      return this.data.usersById[id];
+    }
+    return false;
+  }
+
   async find(params) {
     this.data = this.data || await getSubs();
     const result = {

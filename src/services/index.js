@@ -25,6 +25,7 @@ const verifyAPIKey = async (context) => {
 module.exports = function configure(app) {
   const apiKeyFindHooks = {
     before: {
+      get: [verifyAPIKey],
       find: [verifyAPIKey],
     }
   };

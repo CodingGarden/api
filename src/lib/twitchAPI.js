@@ -8,9 +8,24 @@ const twitchAPI = axios.create({
   },
 });
 
+
 async function getChannel(channelId) {
   const { data } = await twitchAPI.get(`/channels/${channelId}`);
   return data;
+}
+
+async function getChannelFollows(channelId, cursor = '', followers = []) {
+  const {
+    data: {
+      _cursor,
+      follows
+    }
+  } = await twitchAPI.get(`/channels/${channelId}/follows?limit=100&cursor=${cursor}`);
+  if (_cursor) {
+    return followers.concat(await getChannelFollows(channelId, _cursor, follows));
+  }
+  const all = followers.concat(follows);
+  return all;
 }
 
 async function getTeam(teamName) {
@@ -21,6 +36,16 @@ async function getTeam(teamName) {
 async function getStream(channelId) {
   const { data: { stream } } = await twitchAPI.get(`/streams/${channelId}`);
   return stream;
+}
+
+async function getUserFollow(userId, channelId) {
+  try {
+    const { data: { created_at, notifications } } = await twitchAPI.get(`/users/${userId}/follows/channels/${channelId}`);
+    return { created_at, notifications };
+  } catch (error) {
+    console.log(error.response.data);
+    return false;
+  }
 }
 
 async function getUsers(...usernames) {
@@ -41,5 +66,7 @@ module.exports = {
   getChannelByUsername,
   getStream,
   getTeam,
+  getUserFollow,
   getUsers,
+  getChannelFollows,
 };

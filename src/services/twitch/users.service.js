@@ -1,10 +1,15 @@
 /* eslint-disable no-await-in-loop */
 const {
+  getUserFollow,
   getUsers,
 } = require('../../lib/twitchAPI');
 const {
   twitchUsers,
 } = require('../../db');
+
+const {
+  TWITCH_CHANNEL_ID: channelId
+} = process.env;
 
 const cacheTime = 30 * 60 * 60 * 1000;
 const cache = new Map();
@@ -49,7 +54,6 @@ class TwitchUsersService {
       if (notFound.length) {
         let updatedUsers = [];
         while (notFound.length > 0) {
-          console.log('requesting', notFound.length);
           const next100 = notFound.slice(0, 100);
           const results = await getUsers(...next100);
           updatedUsers = updatedUsers.concat(results);
@@ -74,6 +78,8 @@ class TwitchUsersService {
   async create(user) {
     user.id = user._id;
     delete user._id;
+    const follow = await getUserFollow(user.id, channelId);
+    user.follow = follow;
     const createdUser = await twitchUsers.findOneAndUpdate({
       name: user.name,
     }, {

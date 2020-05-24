@@ -9,6 +9,7 @@ const {
 
 class TwitchService {
   constructor(app) {
+    this.app = app;
     listenChats(app);
   }
 
@@ -42,6 +43,8 @@ class TwitchService {
       message.num = count.value;
     }
     const created = await twitchChats.insert(message);
+    const user = await this.app.service('twitch/users').get(message.username);
+    created.user = user;
     return created;
   }
 }

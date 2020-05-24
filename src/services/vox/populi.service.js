@@ -104,8 +104,6 @@ class VoxPopuliService {
   }
 
   async create(message) {
-    const user = await this.app.service('twitch/users').get(message.username);
-    message.user = user;
     return message;
   }
 }

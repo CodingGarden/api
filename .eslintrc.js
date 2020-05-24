@@ -1,11 +1,12 @@
 module.exports = {
-    extends: 'airbnb-base',
-    rules: {
-        'comma-dangle': 0,
-        'no-underscore-dangle': 0,
-        'no-param-reassign': 0,
-        'no-return-assign': 0,
-        camelcase: 0,
-        'class-methods-use-this': 0,
-    }
+  extends: 'airbnb-base',
+  rules: {
+    'comma-dangle': 0,
+    'no-underscore-dangle': 0,
+    'no-param-reassign': 0,
+    'no-return-assign': 0,
+    camelcase: 0,
+    'class-methods-use-this': 0,
+    'no-plusplus': 0
+  }
 };

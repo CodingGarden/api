@@ -1,5 +1,7 @@
 const tmi = require('tmi.js');
 
+const parseEmotes = require('../../lib/parseEmotes');
+
 function listenChats(app) {
   const client = new tmi.Client({
     connection: {
@@ -20,6 +22,7 @@ function listenChats(app) {
     item.created_at = new Date(+item.tmi_sent_ts);
     item.deleted_at = null;
     item.message = message;
+    item.parsedMessage = await parseEmotes(message, item.emotes);
     app.service('twitch/chat').create(item);
   });
   client.on('messagedeleted', (channel, username, deletedMessage, userstate) => {

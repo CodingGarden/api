@@ -1,3 +1,5 @@
+const path = require('path');
+const favicon = require('serve-favicon');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -20,6 +22,7 @@ app.configure(socketio());
 
 app.set('trust proxy', 'loopback');
 app.use(morgan('[:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]'));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(express.json({
   verify: (req, res, buf) => {
     req.feathers.rawBody = buf;

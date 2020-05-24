@@ -44,7 +44,7 @@ class VoxPopuliService {
     const upvotes = {};
     const comments = {};
     messages.forEach((message) => {
-      const args = message.message.split(' ');
+      const args = (message.parsedMessage || message.message).split(' ');
       const command = args.shift();
       if (command.match(topLevelRegex)) {
         if (!message.num) return;
@@ -59,6 +59,7 @@ class VoxPopuliService {
         }
       } else if (command.match(commentUpvoteRegex)) {
         const num = (args.shift() || '').replace('#', '');
+        // eslint-disable-next-line no-restricted-globals
         if (!num || isNaN(num)) return;
         if (command === '!comment') {
           message.content = args.join(' ');

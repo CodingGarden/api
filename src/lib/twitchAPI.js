@@ -9,7 +9,6 @@ const twitchAPI = axios.create({
   },
 });
 
-
 async function getChannel(channelId) {
   const { data } = await twitchAPI.get(`/channels/${channelId}`);
   return data;
@@ -44,7 +43,7 @@ async function getUserFollow(userId, channelId) {
     const { data: { created_at, notifications } } = await twitchAPI.get(`/users/${userId}/follows/channels/${channelId}`);
     return { created_at, notifications };
   } catch (error) {
-    console.log(error.response.data);
+    console.log(userId, error.response.data);
     return false;
   }
 }

@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
 const {
-  getUserSubscription,
   getUserFollow,
   getUsers,
 } = require('../../lib/twitchAPI');
@@ -97,6 +96,18 @@ class TwitchUsersService {
       upsert: true,
     });
     return createdUser;
+  }
+
+  async patch(name, params) {
+    const updates = params.query || {};
+    const updatedUser = await twitchUsers.findOneAndUpdate({
+      name,
+    }, {
+      $set: updates,
+    }, {
+      upsert: true,
+    });
+    return updatedUser;
   }
 }
 

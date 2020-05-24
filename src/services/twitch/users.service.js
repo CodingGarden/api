@@ -11,7 +11,7 @@ const {
   TWITCH_CHANNEL_ID: channelId
 } = process.env;
 
-const cacheTime = 30 * 60 * 60 * 1000;
+const cacheTime = 30 * 60 * 1000;
 const cache = new Map();
 
 class TwitchUsersService {
@@ -75,6 +75,18 @@ class TwitchUsersService {
     }
   }
 
+  async patch(name, updates) {
+    await this.get(name);
+    const updatedUser = await twitchUsers.findOneAndUpdate({
+      name,
+    }, {
+      $set: updates,
+    }, {
+      upsert: true,
+    });
+    return updatedUser;
+  }
+
   async create(user) {
     user.id = user._id;
     delete user._id;
@@ -96,18 +108,6 @@ class TwitchUsersService {
       upsert: true,
     });
     return createdUser;
-  }
-
-  async patch(name, params) {
-    const updates = params.query || {};
-    const updatedUser = await twitchUsers.findOneAndUpdate({
-      name,
-    }, {
-      $set: updates,
-    }, {
-      upsert: true,
-    });
-    return updatedUser;
   }
 }
 

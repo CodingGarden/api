@@ -50,6 +50,7 @@ module.exports = function configure(app) {
     before: {
       get: [verifyAPIKey],
       find: [verifyAPIKey],
+      patch: [internalOnly],
       create: [internalOnly],
     },
   });

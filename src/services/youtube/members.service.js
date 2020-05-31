@@ -29,7 +29,7 @@ class MemberService {
   async create() {
     if (!this.data) return { created: true };
     const latestData = await getMembers();
-    const newMember = latestData.users.find(user => !this.data.usersById[user.id]);
+    const newMember = latestData.users.find((user) => !this.data.usersById[user.id]);
     this.data = latestData;
     return newMember;
   }

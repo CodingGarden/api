@@ -7,6 +7,7 @@ const TwitchChatService = require('./twitch/chat.service');
 const VoxPopuliService = require('./vox/populi.service');
 const TwitchSubsService = require('./twitch/subs.service');
 const TwitchUsersService = require('./twitch/users.service');
+const TwitchRewardsService = require('./twitch/rewards.service');
 
 const unAuthorizedMessage = 'Un-Authorized. 👮🚨 This event will be reported to the internet police. 🚨👮';
 
@@ -38,10 +39,19 @@ module.exports = function configure(app) {
   app.service('youtube/members').hooks(apiKeyFindHooks);
   app.use('twitch/subs', new TwitchSubsService());
   app.service('twitch/subs').hooks(apiKeyFindHooks);
+  app.use('twitch/rewards', new TwitchRewardsService(app));
+  app.service('twitch/rewards').hooks({
+    before: {
+      find: [verifyAPIKey],
+      patch: [verifyAPIKey],
+      create: [internalOnly],
+    },
+  });
   app.use('twitch/chat', new TwitchChatService(app));
   app.service('twitch/chat').hooks({
     before: {
       find: [verifyAPIKey],
+      patch: [verifyAPIKey],
       create: [internalOnly],
       remove: [internalOnly],
     },

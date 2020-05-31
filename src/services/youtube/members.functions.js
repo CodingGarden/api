@@ -56,7 +56,7 @@ async function getChannelFacts() {
   });
   let info = null;
   data.cards.find((card) => {
-    info = card.body.basicCard.item.channelFactsItem.channelFactsData.results.find(result => result.key === 'DASHBOARD_FACT_ANALYTICS_LIFETIME_SUBSCRIBERS');
+    info = card.body.basicCard.item.channelFactsItem.channelFactsData.results.find((result) => result.key === 'DASHBOARD_FACT_ANALYTICS_LIFETIME_SUBSCRIBERS');
     return info;
   });
   const subscribers = info.value.resultTable.metricColumns[0].counts.values[0];
@@ -110,12 +110,12 @@ async function getChannelData(channelIds) {
   return data.channels;
 }
 
-const reduceById = prop => (byId, item) => {
+const reduceById = (prop) => (byId, item) => {
   byId[item[prop]] = item;
   return byId;
 };
 
-const daysToMilliseconds = days => (60 * 60 * 24 * days * 1000);
+const daysToMilliseconds = (days) => (60 * 60 * 24 * days * 1000);
 const emojiRegex = new RegExp(['💧', '🌻', '💩', '🥑', '🚜'].join('|'), 'g');
 
 async function getMembers() {
@@ -123,7 +123,7 @@ async function getMembers() {
     tiers,
     memberData
   } = await getMemberData();
-  const channelData = await getChannelData(memberData.map(m => m.externalChannelId));
+  const channelData = await getChannelData(memberData.map((m) => m.externalChannelId));
   const channelsById = channelData.reduce(reduceById('channelId'), {});
   const tiersById = tiers.reduce(reduceById('id'), {});
   const usersById = {};

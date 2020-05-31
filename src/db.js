@@ -8,10 +8,14 @@ twitchChats.createIndex('username name userId id created_at message');
 const twitchUsers = db.get('twitch-users');
 twitchChats.createIndex('name display_name id created_at');
 
+const twitchRewards = db.get('twitch-rewards');
+twitchChats.createIndex('ack');
+
 const counter = db.get('counter');
 counter.createIndex('name');
 
 module.exports = {
+  twitchRewards,
   twitchChats,
   twitchUsers,
   counter,

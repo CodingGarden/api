@@ -30,7 +30,8 @@
     "morgan": "^1.10.0",
     "serve-favicon": "^2.5.0",
     "socket.io-client": "^2.3.0",
-    "tmi.js": "^1.5.0"
+    "tmi.js": "^1.5.0",
+    "twitchps": "^1.5.0"
   },
   "devDependencies": {
     "eslint": "^7.1.0",

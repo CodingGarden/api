@@ -6,6 +6,8 @@ const {
   twitchChats,
   counter,
 } = require('../../db');
+const getCountries = require('../../lib/getCountries');
+const getBrands = require('../../lib/getBrands');
 
 class TwitchService {
   constructor(app) {
@@ -20,7 +22,7 @@ class TwitchService {
       },
       created_at: {
         $gte: sub(new Date(), {
-          hours: 6,
+          hours: 48,
         }),
       }
     });
@@ -30,6 +32,17 @@ class TwitchService {
   async remove(id) {
     await twitchChats.update({ id }, { $set: { deleted_at: new Date() } });
     return id;
+  }
+
+  async patch(id, updates) {
+    const updated = await twitchChats.findOneAndUpdate({
+      id,
+    }, {
+      $set: updates,
+    }, {
+      upsert: true,
+    });
+    return updated;
   }
 
   async create(message) {
@@ -51,6 +64,30 @@ class TwitchService {
       upsert: true,
     });
     const user = await this.app.service('twitch/users').get(message.username);
+    if (message.message.match(/^!(country|flag|team)/)) {
+      const args = message.message.split(' ');
+      const command = args.shift().slice(1);
+      if (command === 'country' || command === 'flag') {
+        const countryLookup = args.shift();
+        const countries = await getCountries();
+        const country = countries.get(countryLookup);
+        if (country) {
+          user.country = country;
+          await this.app.service('twitch/users').patch(user.id, {
+            country,
+          });
+        }
+      } else if (command === 'team') {
+        const team = args.shift();
+        const brands = await getBrands();
+        if (brands.has(team)) {
+          user.team = team;
+          await this.app.service('twitch/users').patch(user.id, {
+            team,
+          });
+        }
+      }
+    }
     created.user = user;
     return created;
   }

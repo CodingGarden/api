@@ -43,7 +43,13 @@ class TwitchService {
       });
       message.num = count.value;
     }
-    const created = await twitchChats.insert(message);
+    const created = await twitchChats.findOneAndUpdate({
+      id: message.id,
+    }, {
+      $set: message,
+    }, {
+      upsert: true,
+    });
     const user = await this.app.service('twitch/users').get(message.username);
     created.user = user;
     return created;

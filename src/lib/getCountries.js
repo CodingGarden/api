@@ -11,7 +11,7 @@ async function getCountries() {
       code: country.alpha2Code.toLowerCase(),
       name: country.name,
     };
-    countries.set(item.code, item);
+    countries.set(item.code.toLowerCase(), item);
     countries.set(country.name.toLowerCase(), item);
     country.altSpellings.forEach((alt) => {
       countries.set(alt.toLowerCase(), item);

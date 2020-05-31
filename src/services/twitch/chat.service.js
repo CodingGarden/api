@@ -71,7 +71,7 @@ class TwitchService {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
       if (command === 'country' || command === 'flag') {
-        const countryLookup = args.shift();
+        const countryLookup = args.shift().toLowerCase();
         const countries = await getCountries();
         const country = countries.get(countryLookup);
         if (country) {
@@ -81,7 +81,7 @@ class TwitchService {
           });
         }
       } else if (command === 'team') {
-        const team = args.shift();
+        const team = args.shift().toLowerCase();
         const brands = await getBrands();
         if (brands.has(team)) {
           user.team = team;

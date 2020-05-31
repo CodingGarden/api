@@ -24,7 +24,10 @@ class TwitchService {
         $gte: sub(new Date(), {
           hours: 6,
         }),
-      }
+      },
+      ack: {
+        $ne: true,
+      },
     });
     return messages;
   }

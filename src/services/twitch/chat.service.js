@@ -22,7 +22,7 @@ class TwitchService {
       },
       created_at: {
         $gte: sub(new Date(), {
-          hours: 48,
+          hours: 6,
         }),
       }
     });

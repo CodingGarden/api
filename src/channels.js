@@ -4,6 +4,9 @@ module.exports = function channels(app) {
   }
 
   app.on('connection', (connection) => {
+    if (connection.apiKey && connection.apiKey === process.env.CLIENT_API_KEY) {
+      app.channel('api-key').join(connection);
+    }
     app.channel('anonymous').join(connection);
   });
 
@@ -11,6 +14,8 @@ module.exports = function channels(app) {
     const all = [];
     if (hook.path === 'vox/populi') {
       all.push(app.channel('anonymous'));
+    } else if (hook.path === 'twitch/chat') {
+      all.push(app.channel('api-key'));
     }
     return all;
   });

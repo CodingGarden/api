@@ -12,7 +12,7 @@ const appendEmote = (selector) => (emote) => {
     url
   } = selector(emote);
   emotes[code.toLowerCase()] = url;
-  regexStr += `${code.replace(/\(/, '\\(').replace(/\)/, '\\)')}|`;
+  regexStr += `${code.toLowerCase().replace(/\(/, '\\(').replace(/\)/, '\\)')}|`;
 };
 
 async function getBttvEmotes() {
@@ -92,7 +92,7 @@ module.exports = async function parseEmotes(message, messageEmotes = {}) {
     }
   }
   const result = (parsedMessage || message)
-    .replace(emoteRegex, (code) => `![${code}](${emotes[code]}#emote)`);
+    .replace(emoteRegex, (code) => `![${code}](${emotes[code.toLowerCase()]}#emote)`);
   if (result === message) return undefined;
   return result;
 };

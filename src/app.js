@@ -18,7 +18,12 @@ const listenStreamlabs = require('./streamlabs');
 const app = express(feathers());
 
 app.configure(express.rest());
-app.configure(socketio());
+app.configure(socketio((io) => {
+  io.use((socket, next) => {
+    socket.feathers.apiKey = socket.handshake.query.key;
+    next();
+  });
+}));
 
 app.set('trust proxy', 'loopback');
 app.use(morgan('[:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]'));

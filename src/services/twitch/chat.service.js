@@ -14,7 +14,7 @@ class TwitchService {
   }
 
   async find() {
-    return twitchChats.find({
+    const messages = await twitchChats.find({
       deleted_at: {
         $eq: null,
       },
@@ -24,6 +24,7 @@ class TwitchService {
         }),
       }
     });
+    return messages;
   }
 
   async remove(id) {

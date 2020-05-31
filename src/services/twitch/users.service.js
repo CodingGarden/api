@@ -26,14 +26,25 @@ class TwitchUsersService {
     }
     try {
       const [updatedUser] = await getUsers(name);
-      const createdUser = await this.create(updatedUser);
-      cache.set(name, {
-        time: Date.now(),
-        user: createdUser,
-      });
-      return createdUser;
+      if (updatedUser) {
+        const createdUser = await this.create(updatedUser);
+        cache.set(name, {
+          time: Date.now(),
+          user: createdUser,
+        });
+        return createdUser;
+      }
+      return {
+        id: 'not-found',
+        name: 'not-found',
+        display_name: 'not-found',
+        logo: 'https://cdn.discordapp.com/attachments/639685013964849182/716027585594785852/unknown.png',
+        follow: false,
+        subscription: false,
+      };
     } catch (error) {
-      throw new Error('Not Found');
+      console.error(error.response ? error.response.data : error);
+      throw new Error('Not Found', error.message);
     }
   }
 

@@ -18,7 +18,8 @@ const internalOnly = async (context) => {
 const verifyAPIKey = async (context) => {
   if (!context.params.provider) return context;
   if ((context.params.query && context.params.query.key === process.env.CLIENT_API_KEY)
-  || context.params.headers['X-API-KEY'] === process.env.CLIENT_API_KEY) return context;
+  || context.params.headers['X-API-KEY'] === process.env.CLIENT_API_KEY
+  || context.params.apiKey === process.env.CLIENT_API_KEY) return context;
   throw new FeathersError(unAuthorizedMessage, 'un-authorized', 401, 'UnAuthorizedError', null);
 };
 

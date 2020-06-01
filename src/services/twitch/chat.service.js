@@ -28,6 +28,11 @@ class TwitchService {
       ack: {
         $ne: true,
       },
+    }, {
+      sort: {
+        created_at: -1
+      },
+      limit: 100,
     });
     return messages;
   }
@@ -76,7 +81,7 @@ class TwitchService {
         const country = countries.get(countryLookup);
         if (country) {
           user.country = country;
-          await this.app.service('twitch/users').patch(user.id, {
+          await this.app.service('twitch/users').patch(user.name, {
             country,
           });
         }
@@ -85,7 +90,7 @@ class TwitchService {
         const brands = await getBrands();
         if (brands.has(team)) {
           user.team = team;
-          await this.app.service('twitch/users').patch(user.id, {
+          await this.app.service('twitch/users').patch(user.name, {
             team,
           });
         }

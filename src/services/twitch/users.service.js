@@ -95,6 +95,16 @@ class TwitchUsersService {
     }, {
       upsert: true,
     });
+
+    const cachedUser = cache.get(name);
+
+    if (cachedUser) {
+      cache.set(name, {
+        time: cachedUser.time,
+        user: Object.assign(cachedUser.user, updatedUser),
+      });
+    }
+
     return updatedUser;
   }
 

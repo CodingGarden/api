@@ -17,6 +17,7 @@ const listenStreamlabs = require('./streamlabs');
 
 const app = express(feathers());
 
+app.use(cors());
 app.configure(express.rest());
 app.configure(socketio((io) => {
   io.use((socket, next) => {
@@ -34,7 +35,6 @@ app.use(express.json({
   }
 }));
 app.use(helmet());
-app.use(cors());
 
 app.get('/', (req, res) => {
   res.json({

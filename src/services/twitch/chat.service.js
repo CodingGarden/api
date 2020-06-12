@@ -72,7 +72,15 @@ class TwitchService {
       upsert: true,
     });
     const user = await this.app.service('twitch/users').get(message.username);
-    if (message.message.match(/^!(country|flag|team)/)) {
+    if (message.message.match(/^!status /)) {
+      const args = message.message.split(' ');
+      args.shift().slice(1);
+      const status = args.join(' ');
+      user.status = status;
+      await this.app.service('twitch/users').patch(user.name, {
+        status,
+      });
+    } else if (message.message.match(/^!(country|flag|team)/)) {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
       if (command === 'country' || command === 'flag') {

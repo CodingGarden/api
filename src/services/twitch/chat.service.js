@@ -80,6 +80,11 @@ class TwitchService {
       await this.app.service('twitch/users').patch(user.name, {
         status,
       });
+    } else if (message.message.match(/^!clearstatus /)) {
+      user.status = null;
+      await this.app.service('twitch/users').patch(user.name, {
+        status: null,
+      });
     } else if (message.message.match(/^!(country|flag|team)/)) {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);

@@ -12,7 +12,7 @@ module.exports = function channels(app) {
 
   app.publish((data, hook) => {
     const all = [];
-    if (hook.path === 'vox/populi') {
+    if (hook.path === 'vox/populi' || hook.path === 'twitch/users') {
       all.push(app.channel('anonymous'));
     } else if (hook.path === 'twitch/chat' || hook.path === 'twitch/rewards') {
       all.push(app.channel('api-key'));

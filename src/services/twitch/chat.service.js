@@ -80,7 +80,7 @@ class TwitchService {
       await this.app.service('twitch/users').patch(user.name, {
         status,
       });
-    } else if (message.message.match(/^!clearstatus /)) {
+    } else if (message.message.match(/^!clearstatus/)) {
       user.status = null;
       await this.app.service('twitch/users').patch(user.name, {
         status: null,

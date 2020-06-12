@@ -54,6 +54,7 @@ class TwitchService {
   }
 
   async create(message) {
+    const user = await this.app.service('twitch/users').get(message.username);
     if (message.message.match(/^!(ask|idea|submit)/)) {
       const count = await counter.findOneAndUpdate({
         name: 'question',
@@ -63,6 +64,11 @@ class TwitchService {
         upsert: true,
       });
       message.num = count.value;
+      const now = new Date();
+      await this.app.service('twitch/users').patch(user.name, {
+        last_seen: now,
+      });
+      user.last_seen = now;
     }
     const created = await twitchChats.findOneAndUpdate({
       id: message.id,
@@ -71,11 +77,12 @@ class TwitchService {
     }, {
       upsert: true,
     });
-    const user = await this.app.service('twitch/users').get(message.username);
     if (message.message.match(/^!here$/)) {
+      const now = new Date();
       await this.app.service('twitch/users').patch(user.name, {
-        last_seen: new Date(),
+        last_seen: now,
       });
+      user.last_seen = now;
     } else if (message.message.match(/^!setstatus /)) {
       const args = message.message.split(' ');
       args.shift().slice(1);

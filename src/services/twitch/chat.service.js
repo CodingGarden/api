@@ -72,7 +72,11 @@ class TwitchService {
       upsert: true,
     });
     const user = await this.app.service('twitch/users').get(message.username);
-    if (message.message.match(/^!status /)) {
+    if (message.message.match(/^!here$/)) {
+      await this.app.service('twitch/users').patch(user.name, {
+        last_seen: new Date(),
+      });
+    } else if (message.message.match(/^!setstatus /)) {
       const args = message.message.split(' ');
       args.shift().slice(1);
       const status = args.join(' ');

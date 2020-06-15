@@ -55,7 +55,18 @@ class TwitchService {
 
   async create(message) {
     const user = await this.app.service('twitch/users').get(message.username);
-    if (message.message.match(/^!(ask|idea|submit)/)) {
+    const archiveQuestion = message.message.match(/^!archive\s+#?(\d+)$/);
+    if (archiveQuestion) {
+      const num = +archiveQuestion[1];
+      const question = await twitchChats.findOne({
+        num,
+      });
+      if (question && !question.archived && !question.deleted_at && (message.badges.moderator
+        || message.badges.broadcaster
+        || question.user_id === message.user_id)) {
+        await this.app.service('vox/populi').remove(question._id);
+      }
+    } else if (message.message.match(/^!(ask|idea|submit)/)) {
       const count = await counter.findOneAndUpdate({
         name: 'question',
       }, {

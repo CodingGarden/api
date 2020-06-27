@@ -95,7 +95,7 @@ class TwitchService {
       });
       user.last_seen = now;
     } else if (message.message.match(/^!setstatus /)) {
-      const args = message.message.split(' ');
+      const args = (message.parsedMessage || message.message).split(' ');
       args.shift().slice(1);
       const status = args.join(' ');
       user.status = status;

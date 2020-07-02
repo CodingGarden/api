@@ -1,0 +1,24 @@
+version: "3.6"
+
+services:
+  api:
+    build: .
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb/api 
+    volumes:
+      - .:/usr/src/app 
+    command: ["npm","run","dev"]
+  mongodb:
+    image: mongo
+    ports: 
+      - 27017:27017 
+    volumes:
+      - db
+
+volumes:
+  db: {}

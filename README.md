@@ -4,9 +4,9 @@ An API for the Coding Garden YouTube / Twitch channel.
 
 ## Endpoints
 
-* `GET /patreon/pledges`
-* `GET /youtube/members`
-* `GET /youtube/stats`
+-   `GET /patreon/pledges`
+-   `GET /youtube/members`
+-   `GET /youtube/stats`
 
 ## Configuration
 
@@ -32,3 +32,17 @@ npm run lint
 ```sh
 npm run dev
 ```
+
+## Docker
+
+For ease of use, there is a docker-compose file container MongoDB and the NodeJS server.
+follow the same configuration steps then run
+
+```sh
+docker-compoose up
+```
+
+To get things up and running.
+the docker-compose file is set with hot-reloading for dev.
+
+Run `docker-compose down` to stop everything

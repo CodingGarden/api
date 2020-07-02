@@ -18,6 +18,20 @@ class VoxPopuliService {
   }
 
   async find() {
+    if (this.data) return this.data;
+    this.data = await this.getVox();
+    this.allByNum = {};
+    this.data.questions.forEach((question) => this.allByNum[question.num] = question);
+    this.data.ideas.forEach((idea) => this.allByNum[idea.num] = idea);
+    this.data.submissions.forEach((submission) => this.allByNum[submission.num] = submission);
+    this.usersById = this.data.users.reduce((byId, user) => {
+      byId[user.id] = user;
+      return byId;
+    }, {});
+    return this.data;
+  }
+
+  async getVox() {
     const messages = await twitchChats.find({
       message: {
         $regex: voxRegex,
@@ -105,6 +119,40 @@ class VoxPopuliService {
   }
 
   async create(message) {
+    if (this.data) {
+      if (!this.usersById[message.user.id]) {
+        this.data.users.push(message.user);
+      }
+      this.usersById[message.user.id] = message.user;
+      const args = (message.parsedMessage || message.message).split(' ');
+      const command = args.shift();
+      if (command.match(/^!(ask|idea|submit)/) && message.num) {
+        const value = args.join(' ');
+        message.content = value;
+        message.comments = [];
+        message.upvotes = [];
+        message.upvote_count = 0;
+        this.allByNum[message.num] = message;
+        if (command === '!ask') {
+          this.data.questions.push(message);
+        } else if (command === '!idea') {
+          this.data.ideas.push(message);
+        } else if (command === '!submit') {
+          this.data.submissions.push(message);
+        }
+      } else if (command.match(/^!(comment|upvote)/)) {
+        const num = (args.shift() || '').replace('#', '');
+        if (num && !isNaN(num) && this.allByNum[num]) {
+          if (command === '!comment') {
+            message.content = args.join(' ');
+            this.allByNum[num].comments.push(message);
+          } else if (command === '!upvote') {
+            this.allByNum[num].upvotes.push(message.username);
+            this.allByNum[num].upvotes = [...new Set(this.allByNum[num].upvotes)];
+          }
+        }
+      }
+    }
     return message;
   }
 }

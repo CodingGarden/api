@@ -15,8 +15,8 @@ class TwitchService {
     listenChats(app);
   }
 
-  async find() {
-    const messages = await twitchChats.find({
+  async find(params) {
+    const query = {
       deleted_at: {
         $eq: null,
       },
@@ -28,7 +28,13 @@ class TwitchService {
       ack: {
         $ne: true,
       },
-    }, {
+    };
+    if (params.query && (params.query.commands === 'false' || params.query.commands === false)) {
+      query.message = {
+        $regex: /^(?!\\!)\w+/,
+      };
+    }
+    const messages = await twitchChats.find(query, {
       sort: {
         created_at: -1
       },

@@ -29,10 +29,18 @@ class TwitchService {
         $ne: true,
       },
     };
-    if (params.query && (params.query.commands === 'false' || params.query.commands === false)) {
-      query.message = {
-        $regex: /^(?!\\!)\w+/,
-      };
+    if (params.query) {
+      if (params.query.commands === 'false' || params.query.commands === false) {
+        query.message = {
+          $regex: /^(?!\\!)\w+/,
+        };
+      }
+      if (params.query.user_id) {
+        query.user_id = params.query.user_id;
+      }
+      if (params.query.created_at) {
+        query.created_at = params.query.created_at;
+      }
     }
     const messages = await twitchChats.find(query, {
       sort: {

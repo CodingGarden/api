@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable class-methods-use-this */
 const {
-  twitchChats,
+  twitchCommands,
 } = require('../../db');
 
 const voxRegex = /^!(ask|idea|submit|comment|upvote)/;
@@ -11,7 +11,7 @@ const commentUpvoteRegex = /^!(comment|upvote)/;
 class VoxPopuliService {
   constructor(app) {
     this.app = app;
-    app.service('twitch/chat').on('created', (message) => {
+    app.service('twitch/commands').on('created', (message) => {
       if (message.message.match(voxRegex)) {
         app.service('vox/populi').create(message);
       }
@@ -33,7 +33,7 @@ class VoxPopuliService {
   }
 
   async getVox() {
-    const messages = await twitchChats.find({
+    const messages = await twitchCommands.find({
       message: {
         $regex: voxRegex,
       },
@@ -106,7 +106,7 @@ class VoxPopuliService {
   }
 
   async remove(_id) {
-    const message = await twitchChats.findOneAndUpdate({
+    const message = await twitchCommands.findOneAndUpdate({
       _id,
     }, {
       $set: {

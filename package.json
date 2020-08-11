@@ -16,17 +16,18 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@feathersjs/errors": "^4.5.5",
-    "@feathersjs/express": "^4.5.6",
-    "@feathersjs/feathers": "^4.5.5",
-    "@feathersjs/socketio": "^4.5.6",
+    "@feathersjs/errors": "^4.5.7",
+    "@feathersjs/express": "^4.5.7",
+    "@feathersjs/feathers": "^4.5.7",
+    "@feathersjs/socketio": "^4.5.7",
     "axios": "^0.19.2",
     "cors": "^2.8.5",
     "date-fns": "^2.15.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "helmet": "^3.23.3",
-    "monk": "^7.3.0",
+    "helmet": "^4.0.0",
+    "jws": "^4.0.0",
+    "monk": "^7.3.1",
     "morgan": "^1.10.0",
     "serve-favicon": "^2.5.0",
     "socket.io-client": "^2.3.0",
@@ -34,7 +35,7 @@
     "twitchps": "^1.5.4"
   },
   "devDependencies": {
-    "eslint": "^7.5.0",
+    "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
     "nodemon": "^2.0.4"

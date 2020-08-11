@@ -8,6 +8,8 @@ const VoxPopuliService = require('./vox/populi.service');
 const TwitchSubsService = require('./twitch/subs.service');
 const TwitchUsersService = require('./twitch/users.service');
 const TwitchRewardsService = require('./twitch/rewards.service');
+const TwitchLoginService = require('./twitch/login.service');
+const TwitchCommandsService = require('./twitch/commands.service');
 
 const unAuthorizedMessage = 'Un-Authorized. 👮🚨 This event will be reported to the internet police. 🚨👮';
 
@@ -56,6 +58,15 @@ module.exports = function configure(app) {
       remove: [internalOnly],
     },
   });
+  app.use('twitch/commands', new TwitchCommandsService(app));
+  app.service('twitch/commands').hooks({
+    before: {
+      find: [verifyAPIKey],
+      patch: [verifyAPIKey],
+      create: [internalOnly],
+      remove: [internalOnly],
+    },
+  });
   app.use('twitch/users', new TwitchUsersService(app));
   app.service('twitch/users').hooks({
     before: {
@@ -72,4 +83,5 @@ module.exports = function configure(app) {
       remove: [verifyAPIKey],
     },
   });
+  app.use('twitch/login', new TwitchLoginService(app));
 };

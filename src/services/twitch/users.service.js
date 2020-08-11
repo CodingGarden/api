@@ -4,6 +4,9 @@ const {
   getUsers,
 } = require('../../lib/twitchAPI');
 const {
+  getModerators,
+} = require('./chat.functions');
+const {
   twitchUsers,
 } = require('../../db');
 
@@ -20,6 +23,9 @@ class TwitchUsersService {
   }
 
   async get(name) {
+    if (name === 'moderator') {
+      return getModerators();
+    }
     const cachedUser = cache.get(name);
     if (cachedUser && cachedUser.time > Date.now() - cacheTime) {
       return cachedUser.user;

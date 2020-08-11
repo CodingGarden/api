@@ -42,13 +42,18 @@ app.get('/', (req, res) => {
   });
 });
 
+app.use((req, res, next) => {
+  req.feathers.res = res;
+  next();
+});
+
 app.configure(services);
 app.configure(channels);
 app.configure(listenStreamlabs);
 
 app.use(middlewares.notFound);
 app.use((error, req, res, next) => {
-  console.error(error);
+  // console.error(error);
   next(error);
 });
 app.use(express.errorHandler());

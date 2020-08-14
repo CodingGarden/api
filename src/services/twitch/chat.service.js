@@ -40,7 +40,7 @@ class TwitchService {
       sort: {
         created_at: -1
       },
-      limit: 1000,
+      limit: params.query.limit || 1000,
     });
     return messages;
   }

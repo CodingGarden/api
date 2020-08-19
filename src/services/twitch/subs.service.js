@@ -34,6 +34,8 @@ const {
 //   }
 // },
 
+const cacheTime = 30 * 60 * 1000;
+let lastRequest;
 const apiUrl = 'https://api.twitch.tv/kraken/channels/413856795/subscriptions?limit=100';
 
 const tiersToCents = {
@@ -98,7 +100,10 @@ class TwitchSubs {
   }
 
   async get(id) {
-    this.data = this.data || await getSubs();
+    if (!this.data || !lastRequest || lastRequest < Date.now() - cacheTime) {
+      this.data = await getSubs();
+      lastRequest = Date.now();
+    }
     if (Object.prototype.hasOwnProperty.call(this.data.usersById, id)) {
       return this.data.usersById[id];
     }
@@ -106,7 +111,10 @@ class TwitchSubs {
   }
 
   async find(params) {
-    this.data = this.data || await getSubs();
+    if (!this.data || !lastRequest || lastRequest < Date.now() - cacheTime) {
+      this.data = await getSubs();
+      lastRequest = Date.now();
+    }
     const result = {
       users: this.data.users.slice(0),
       levels: this.data.levels,

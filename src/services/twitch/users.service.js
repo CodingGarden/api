@@ -15,6 +15,7 @@ const {
 } = process.env;
 
 const cacheTime = 30 * 60 * 1000;
+const existingCacheTime = 10 * 60 * 1000;
 const cache = new Map();
 
 class TwitchUsersService {
@@ -68,16 +69,36 @@ class TwitchUsersService {
     });
     try {
       let createdUsers = [];
+      const existingUsers = [];
       if (notFound.length) {
-        let updatedUsers = [];
         while (notFound.length > 0) {
           const next100 = notFound.slice(0, 100);
-          const results = await getUsers(...next100);
-          updatedUsers = updatedUsers.concat(results);
+          const dbUsers = await twitchUsers.find({
+            name: {
+              $in: next100,
+            },
+          });
+          console.log(dbUsers.length, 'already in db...');
+          const notInDb = new Set(next100);
+          // eslint-disable-next-line no-loop-func
+          dbUsers.forEach((user) => {
+            notInDb.remove(user.name);
+            existingUsers.push(user);
+            cache.set(user.name, {
+              time: Date.now() - existingCacheTime,
+              user,
+            });
+          });
+          const remaining = [...notInDb];
+          if (remaining.length) {
+            console.log(remaining.length, 'users not in db...');
+            const results = await getUsers(...remaining);
+            createdUsers = createdUsers.concat(results);
+          }
           notFound = notFound.slice(next100.length);
         }
         createdUsers = await Promise.all(
-          updatedUsers.map((user) => this.create(user))
+          createdUsers.map((user) => this.create(user))
         );
         createdUsers.forEach((user) => {
           cache.set(user.name, {
@@ -86,7 +107,7 @@ class TwitchUsersService {
           });
         });
       }
-      return users.concat(createdUsers);
+      return users.concat(createdUsers).concat(existingUsers);
     } catch (error) {
       throw new Error('Not Found');
     }

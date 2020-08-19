@@ -82,7 +82,7 @@ class TwitchUsersService {
           const notInDb = new Set(next100);
           // eslint-disable-next-line no-loop-func
           dbUsers.forEach((user) => {
-            notInDb.remove(user.name);
+            notInDb.delete(user.name);
             existingUsers.push(user);
             cache.set(user.name, {
               time: Date.now() - existingCacheTime,

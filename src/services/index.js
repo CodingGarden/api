@@ -73,7 +73,7 @@ module.exports = function configure(app) {
       get: [verifyAPIKey],
       find: [verifyAPIKey],
       patch: [internalOnly],
-      create: [internalOnly],
+      create: [internalOnly, (context) => context.event = null],
     },
   });
   app.use('vox/populi', new VoxPopuliService(app));

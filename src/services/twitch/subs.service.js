@@ -65,7 +65,9 @@ async function getSubsPage(offset = 0, all = []) {
 }
 
 async function getSubs() {
+  console.log('getting subs...');
   const data = await getSubsPage();
+  console.log('got all subs!');
   const usersById = {};
   const users = data.map(({
     sub_plan: tier,
@@ -100,10 +102,14 @@ class TwitchSubs {
   }
 
   async get(id) {
-    if (!this.data || !lastRequest || lastRequest < Date.now() - cacheTime) {
-      this.data = await getSubs();
+    if (!this.data) {
+      this.data = getSubs();
+      lastRequest = Date.now();
+    } else if (!lastRequest || lastRequest < Date.now() - cacheTime) {
+      this.data = getSubs();
       lastRequest = Date.now();
     }
+    this.data = await this.data;
     if (Object.prototype.hasOwnProperty.call(this.data.usersById, id)) {
       return this.data.usersById[id];
     }
@@ -111,10 +117,14 @@ class TwitchSubs {
   }
 
   async find(params) {
-    if (!this.data || !lastRequest || lastRequest < Date.now() - cacheTime) {
-      this.data = await getSubs();
+    if (!this.data) {
+      this.data = getSubs();
+      lastRequest = Date.now();
+    } else if (!lastRequest || lastRequest < Date.now() - cacheTime) {
+      this.data = getSubs();
       lastRequest = Date.now();
     }
+    this.data = await this.data;
     const result = {
       users: this.data.users.slice(0),
       levels: this.data.levels,

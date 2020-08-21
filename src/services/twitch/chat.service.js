@@ -1,10 +1,6 @@
 const { sub } = require('date-fns');
-const {
-  listenChats
-} = require('./chat.functions');
-const {
-  twitchChats,
-} = require('../../db');
+const { listenChats } = require('./chat.functions');
+const { twitchChats } = require('../../db');
 
 class TwitchService {
   constructor(app) {
@@ -38,7 +34,7 @@ class TwitchService {
     }
     const messages = await twitchChats.find(query, {
       sort: {
-        created_at: -1
+        created_at: -1,
       },
       limit: params.query.limit || 1000,
     });
@@ -51,25 +47,54 @@ class TwitchService {
   }
 
   async patch(id, updates) {
-    const updated = await twitchChats.findOneAndUpdate({
-      id,
-    }, {
-      $set: updates,
-    }, {
-      upsert: true,
-    });
+    const updated = await twitchChats.findOneAndUpdate(
+      {
+        id,
+      },
+      {
+        $set: updates,
+      },
+      {
+        upsert: true,
+      }
+    );
     return updated;
   }
 
   async create(message) {
-    const user = await this.app.service('twitch/users').get(message.username);
-    const created = await twitchChats.findOneAndUpdate({
-      id: message.id,
-    }, {
-      $set: message,
-    }, {
-      upsert: true,
-    });
+    let user = {
+      _id: message.user_id,
+      name: message.username,
+      bio: '',
+      created_at: new Date(),
+      display_name: message.display_name,
+      id: message.user_id,
+      logo: 'https://static-cdn.jtvnw.net/jtv_user_pictures/611cac54-34e0-4c2a-851b-66e5ea2b3f81-profile_image-300x300.png',
+      type: 'user',
+      updated_at: new Date(),
+      follow: false,
+      subscription: false,
+    };
+    try {
+      user = await this.app.service('twitch/users').get(message.username);
+    } catch (error) {
+      console.error(
+        'error requesting user...',
+        error.message,
+        message.username
+      );
+    }
+    const created = await twitchChats.findOneAndUpdate(
+      {
+        id: message.id,
+      },
+      {
+        $set: message,
+      },
+      {
+        upsert: true,
+      }
+    );
     created.user = user;
     return created;
   }

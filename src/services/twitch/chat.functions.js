@@ -28,7 +28,11 @@ function listenChats(app) {
     item.created_at = new Date(+item.tmi_sent_ts);
     item.deleted_at = null;
     item.message = message;
-    item.parsedMessage = await parseEmotes(message, item.emotes);
+    try {
+      item.parsedMessage = await parseEmotes(message, item.emotes);
+    } catch (error) {
+      console.error('error parsing emotes...', error.message, item);
+    }
     if (message.match(/^!\w/)) {
       item.args = message.split(' ');
       item.command = item.args.shift().slice(1);

@@ -20,6 +20,7 @@ const app = express(feathers());
 app.use(cors());
 app.configure(express.rest());
 app.configure(socketio((io) => {
+  io.set('transports', ['websocket']);
   io.use((socket, next) => {
     socket.feathers.apiKey = socket.handshake.query.key;
     next();

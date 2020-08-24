@@ -141,17 +141,17 @@ class TwitchUsersService {
     const follow = await getUserFollow(user.id, channelId);
     user.follow = follow;
     user.subscription = false;
-    // try {
-    //   const subscription = await this.app.service('twitch/subs').get(user.id);
-    //   if (subscription) {
-    //     user.subscription = {
-    //       sub_plan: subscription.level.level_id,
-    //       created_at: subscription.level.created_at
-    //     };
-    //   }
-    // } catch(error) {
-    //   console.log('error retrieving subs...', error.message, user);
-    // }
+    try {
+      const subscription = await this.app.service('twitch/subs').get(user.id);
+      if (subscription) {
+        user.subscription = {
+          sub_plan: subscription.level.level_id,
+          created_at: subscription.level.created_at
+        };
+      }
+    } catch(error) {
+      console.log('error retrieving subs...', error.message, user);
+    }
     const createdUser = await twitchUsers.findOneAndUpdate({
       name: user.name,
     }, {

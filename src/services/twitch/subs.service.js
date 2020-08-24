@@ -61,7 +61,8 @@ async function getSubsPage(offset = 0, all = []) {
       }
     });
   all = all.concat(subscriptions);
-  if (all.length === _total) return all;
+  console.log('Got', all.length, 'of', _total, 'subs');
+  if (all.length >= _total) return all;
   return getSubsPage(offset + 100, all);
 }
 

@@ -51,6 +51,7 @@ const levels = {
 };
 
 async function getSubsPage(offset = 0, all = []) {
+  console.log('Gettting sub offset', offset);
   const { data: { _total, subscriptions } } = await axios
     .get(`${apiUrl}&offset=${offset}`, {
       headers: {

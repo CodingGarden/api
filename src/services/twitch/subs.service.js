@@ -52,6 +52,7 @@ const levels = {
 
 async function getSubsPage(offset = 0, all = []) {
   console.log('Gettting sub offset', offset);
+  const beforeLength = all.length;
   const { data: { _total, subscriptions } } = await axios
     .get(`${apiUrl}&offset=${offset}`, {
       headers: {
@@ -62,7 +63,7 @@ async function getSubsPage(offset = 0, all = []) {
     });
   all = all.concat(subscriptions);
   console.log('Got', all.length, 'of', _total, 'subs');
-  if (all.length >= _total) return all;
+  if (all.length >= _total || beforeLength === all.length) return all;
   return getSubsPage(offset + 100, all);
 }
 

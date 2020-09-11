@@ -5,6 +5,7 @@ const {
 } = require('../../db');
 
 const voxRegex = /^!(ask|idea|submit|comment|upvote)/;
+const eventRegex = /^!(ask|idea|submit|comment|upvote|archive)/;
 const topLevelRegex = /^!(ask|idea|submit)/;
 const commentUpvoteRegex = /^!(comment|upvote)/;
 
@@ -12,7 +13,7 @@ class VoxPopuliService {
   constructor(app) {
     this.app = app;
     app.service('twitch/commands').on('created', (message) => {
-      if (message.message.match(voxRegex)) {
+      if (message.message.match(eventRegex)) {
         app.service('vox/populi').create(message);
       }
     });

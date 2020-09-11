@@ -1,0 +1,15 @@
+module.exports = new Set([
+  'she',
+  'he',
+  'ze',
+  'they',
+  'co',
+  'none',
+  'xe',
+  'hy',
+  'it',
+  'one',
+  'em',
+  '\'em',
+  'yo',
+]);

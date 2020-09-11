@@ -141,7 +141,7 @@ class TwitchCommandsService {
           });
         }
       } else if (command === 'pronoun') {
-        const pronoun = args.shift().toLowerCase();
+        const pronoun = (args.shift() || '').toLowerCase();
         if (pronounChoices.has(pronoun)) {
           user.pronoun = pronoun;
           await this.app.service('twitch/users').patch(user.name, {

@@ -24,7 +24,7 @@ async function getBttvEmotes() {
       channelEmotes,
       sharedEmotes
     }
-  } = await axios.get('https://api.betterttv.net/3/cached/users/twitch/413856795');
+  } = await axios.get(`tps://api.betterttv.net/3/cached/users/twitch/${process.env.TWITCH_CHANNEL_ID}`);
   allEmotes = allEmotes.concat(channelEmotes).concat(sharedEmotes);
   const appenderizer3000 = appendEmote(({
     code,
@@ -38,7 +38,7 @@ async function getBttvEmotes() {
 
 async function getFfzEmotes() {
   const { data: { sets } } = await axios.get('https://api.frankerfacez.com/v1/set/global');
-  const { data: { sets: channelSets } } = await axios.get('https://api.frankerfacez.com/v1/room/codinggarden');
+  const { data: { sets: channelSets } } = await axios.get(`ttps://api.frankerfacez.com/v1/room/${process.env.TWITCH_CHANNEL_NAME}`);
   const all = sets[3].emoticons.concat(channelSets[609613].emoticons);
   const appenderizer9000 = appendEmote(({
     name: code,

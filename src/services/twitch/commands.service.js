@@ -1,8 +1,11 @@
-const { sub } = require('date-fns');
+const {
+  sub
+} = require('date-fns');
 const {
   twitchCommands,
   counter,
 } = require('../../db');
+const pronounChoices = require('../../lib/validPronounChoices');
 const getCountries = require('../../lib/getCountries');
 const getBrands = require('../../lib/getBrands');
 
@@ -48,7 +51,13 @@ class TwitchCommandsService {
   }
 
   async remove(id) {
-    await twitchCommands.update({ id }, { $set: { deleted_at: new Date() } });
+    await twitchCommands.update({
+      id
+    }, {
+      $set: {
+        deleted_at: new Date()
+      }
+    });
     return id;
   }
 
@@ -71,16 +80,18 @@ class TwitchCommandsService {
       const question = await twitchCommands.findOne({
         num,
       });
-      if (question && !question.archived && !question.deleted_at && (message.badges.moderator
-        || message.badges.broadcaster
-        || question.user_id === message.user_id)) {
+      if (question && !question.archived && !question.deleted_at && (message.badges.moderator ||
+          message.badges.broadcaster ||
+          question.user_id === message.user_id)) {
         await this.app.service('vox/populi').remove(question._id);
       }
     } else if (message.message.match(/^!(ask|idea|submit)/)) {
       const count = await counter.findOneAndUpdate({
         name: 'question',
       }, {
-        $inc: { value: 1 }
+        $inc: {
+          value: 1
+        }
       }, {
         upsert: true,
       });
@@ -117,7 +128,7 @@ class TwitchCommandsService {
       await this.app.service('twitch/users').patch(user.name, {
         status: null,
       });
-    } else if (message.message.match(/^!(country|flag|team)/)) {
+    } else if (message.message.match(/^!(country|flag|team|pronoun)/)) {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
       if (command === 'country' || command === 'flag') {
@@ -137,6 +148,14 @@ class TwitchCommandsService {
           user.team = team;
           await this.app.service('twitch/users').patch(user.name, {
             team,
+          });
+        }
+      } else if (command === 'pronoun') {
+        const pronoun = (args.shift() || '').toLowerCase();
+        if (pronounChoices.has(pronoun)) {
+          user.pronoun = pronoun;
+          await this.app.service('twitch/users').patch(user.name, {
+            pronoun,
           });
         }
       }

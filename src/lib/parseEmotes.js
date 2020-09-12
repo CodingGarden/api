@@ -38,7 +38,7 @@ async function getBttvEmotes() {
 
 async function getFfzEmotes() {
   const { data: { sets } } = await axios.get('https://api.frankerfacez.com/v1/set/global');
-  const { data: { sets: channelSets } } = await axios.get(`ttps://api.frankerfacez.com/v1/room/${process.env.TWITCH_CHANNEL_NAME}`);
+  const { data: { sets: channelSets } } = await axios.get(`https://api.frankerfacez.com/v1/room/${process.env.TWITCH_CHANNEL_NAME}`);
   const all = sets[3].emoticons.concat(channelSets[609613].emoticons);
   const appenderizer9000 = appendEmote(({
     name: code,

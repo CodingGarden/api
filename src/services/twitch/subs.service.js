@@ -1,8 +1,11 @@
 const axios = require('axios');
 
+const Requesting_subs_limit = 100;
+
 const {
   TWITCH_SUB_OAUTH_TOKEN,
   TWITCH_SUB_CLIENT_ID,
+  TWITCH_CHANNEL_ID,
 } = process.env;
 
 // {
@@ -36,7 +39,7 @@ const {
 
 const cacheTime = 30 * 60 * 1000;
 let lastRequest;
-const apiUrl = 'https://api.twitch.tv/kraken/channels/413856795/subscriptions?limit=100';
+const apiUrl = `https://api.twitch.tv/kraken/channels/${TWITCH_CHANNEL_ID}/subscriptions?limit=${Requesting_subs_limit}`;
 
 const tiersToCents = {
   1000: 499,
@@ -52,7 +55,6 @@ const levels = {
 
 async function getSubsPage(offset = 0, all = []) {
   console.log('Gettting sub offset', offset);
-  const beforeLength = all.length;
   const { data: { _total, subscriptions } } = await axios
     .get(`${apiUrl}&offset=${offset}`, {
       headers: {
@@ -63,7 +65,7 @@ async function getSubsPage(offset = 0, all = []) {
     });
   all = all.concat(subscriptions);
   console.log('Got', all.length, 'of', _total, 'subs');
-  if (all.length >= _total || beforeLength === all.length) return all;
+  if (all.length >= _total) return all;
   return getSubsPage(offset + 100, all);
 }
 
@@ -91,7 +93,7 @@ async function getSubs() {
     };
     usersById[id] = user;
     return user;
-  }).filter((user) => user.id !== '413856795');
+  }).filter((user) => user.id !== TWITCH_CHANNEL_ID);
   return {
     users,
     levels,

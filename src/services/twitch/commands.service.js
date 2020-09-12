@@ -3,7 +3,6 @@ const {
   twitchCommands,
   counter,
 } = require('../../db');
-const pronounChoices = require('../../lib/validPronounChoices');
 const getCountries = require('../../lib/getCountries');
 const getBrands = require('../../lib/getBrands');
 
@@ -118,7 +117,7 @@ class TwitchCommandsService {
       await this.app.service('twitch/users').patch(user.name, {
         status: null,
       });
-    } else if (message.message.match(/^!(country|flag|team|pronoun)/)) {
+    } else if (message.message.match(/^!(country|flag|team)/)) {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
       if (command === 'country' || command === 'flag') {
@@ -138,14 +137,6 @@ class TwitchCommandsService {
           user.team = team;
           await this.app.service('twitch/users').patch(user.name, {
             team,
-          });
-        }
-      } else if (command === 'pronoun') {
-        const pronoun = (args.shift() || '').toLowerCase();
-        if (pronounChoices.has(pronoun)) {
-          user.pronoun = pronoun;
-          await this.app.service('twitch/users').patch(user.name, {
-            pronoun,
           });
         }
       }

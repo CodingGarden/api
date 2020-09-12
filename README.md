@@ -17,8 +17,16 @@ cp .env.sample .env # update accordingly cp .env.sample .env # update accordingl
 
 Copy `src/services/youtube/members.config.sample.js` to `src/services/youtube/members.config.js` and update accordingly. Needed values can be found by inspecting network traffic in the YouTube Dashboard: https://studio.youtube.com/channel/channel-id-here/monetization/memberships.
 
-npm run lint
- ```sh npm run dev ``` 
+## Lint 
+ ```sh
+   npm run lint
+```
+
+## Development
+
+ ```sh 
+ npm run dev  
+ ``` 
  
  ## Extra info 
  NODE_ENV=                  <--- In what state the app should be build in -- production or development.

@@ -10,12 +10,13 @@ An API for the Coding Garden YouTube / Twitch channel.
 
 ## Configuration
 
-```
-sh npm install
+```sh 
+npm install
 cp .env.sample .env # update accordingly cp .env.sample .env # update accordingly --- See extra info below
 ```  
-
+```sh
 Copy `src/services/youtube/members.config.sample.js` to `src/services/youtube/members.config.js` and update accordingly. Needed values can be found by inspecting network traffic in the YouTube Dashboard: https://studio.youtube.com/channel/channel-id-here/monetization/memberships.
+```
 
 ## Lint 
  ```sh

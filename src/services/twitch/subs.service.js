@@ -6,7 +6,29 @@ const {
   TWITCH_SUB_OAUTH_TOKEN,
   TWITCH_SUB_CLIENT_ID,
   TWITCH_CHANNEL_ID,
+  Oauth_Included_In_Token,
 } = process.env;
+
+
+
+
+let Oauth_;
+
+if (Oauth_Included_In_Token === true) {
+  return Oauth_ = `${TWITCH_SUB_OAUTH_TOKEN}`
+} else {
+  return Oauth_ = `oauth:${TWITCH_SUB_OAUTH_TOKEN}`
+}
+
+
+
+
+
+
+
+
+
+
 
 // {
 // created_at": "2020-04-28T11:37:28Z",
@@ -58,7 +80,7 @@ async function getSubsPage(offset = 0, all = []) {
   const { data: { _total, subscriptions } } = await axios
     .get(`${apiUrl}&offset=${offset}`, {
       headers: {
-        authorization: `OAuth ${TWITCH_SUB_OAUTH_TOKEN}`,
+        authorization: Oauth_,
         'Client-ID': TWITCH_SUB_CLIENT_ID,
         Accept: 'application/vnd.twitchtv.v5+json',
       }

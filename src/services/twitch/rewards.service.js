@@ -3,6 +3,7 @@ const TPS = require('twitchps');
 const {
   TWITCH_CHANNEL_ID,
   Developing,
+  TWITCH_REWARDS_TOKEN,
 } = process.env;
 
 const {

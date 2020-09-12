@@ -15,8 +15,7 @@ sh npm install
 cp .env.sample .env # update accordingly cp .env.sample .env # update accordingly --- See extra info below
 ```  
 
-Copy `src/services/youtube/members.config.sample.js` to `src/services/youtube/members.config.js` and update accordingly. Needed values can be found by inspecting network traffic in the YouTube Dashboard: https://studio.youtube.com/channel/channel-id-here/monetization/memberships. 
-@@ -32,3 +32,24 @@ 
+Copy `src/services/youtube/members.config.sample.js` to `src/services/youtube/members.config.js` and update accordingly. Needed values can be found by inspecting network traffic in the YouTube Dashboard: https://studio.youtube.com/channel/channel-id-here/monetization/memberships.
 
 npm run lint
  ```sh npm run dev ``` 

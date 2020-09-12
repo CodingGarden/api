@@ -24,7 +24,7 @@ async function getBttvEmotes() {
       channelEmotes,
       sharedEmotes
     }
-  } = await axios.get(`tps://api.betterttv.net/3/cached/users/twitch/${process.env.TWITCH_CHANNEL_ID}`);
+  } = await axios.get(`https://api.betterttv.net/3/cached/users/twitch/${process.env.TWITCH_CHANNEL_ID}`);
   allEmotes = allEmotes.concat(channelEmotes).concat(sharedEmotes);
   const appenderizer3000 = appendEmote(({
     code,

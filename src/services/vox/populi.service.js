@@ -45,7 +45,8 @@ class VoxPopuliService {
         $ne: true,
       },
       created_at: {
-        $gt: new Date('2020-05-20'),
+        // $gt: new Date('2020-05-20'),
+        $gt: new Date('2020-09-01'),
       },
     });
     const names = [...new Set(messages.map((user) => user.username))];

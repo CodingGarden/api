@@ -53,9 +53,9 @@ class TwitchCommandsService {
     return id;
   }
 
-  async patch(id, updates) {
+  async patch(_id, updates) {
     const updated = await twitchCommands.findOneAndUpdate({
-      id,
+      _id,
     }, {
       $set: updates,
     }, {

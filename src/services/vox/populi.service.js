@@ -125,6 +125,16 @@ class VoxPopuliService {
     throw new Error('Not found.');
   }
 
+  async patch(id, updates) {
+    const patched = await this.app
+      .service('twitch/commands')
+      .patch(id, updates);
+    if (patched.num) {
+      this.allByNum[patched.num] = patched;
+    }
+    return patched;
+  }
+
   async create(message) {
     if (this.data) {
       if (!this.usersById[message.user.id]) {

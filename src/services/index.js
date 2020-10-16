@@ -80,6 +80,7 @@ module.exports = function configure(app) {
   app.service('vox/populi').hooks({
     before: {
       create: [internalOnly],
+      patch: [verifyAPIKey],
       remove: [verifyAPIKey],
     },
   });

@@ -9,6 +9,14 @@ const twitchAPI = axios.create({
   },
 });
 
+const helixAPI = axios.create({
+  baseURL: 'https://api.twitch.tv/helix',
+  headers: {
+    'Client-ID': process.env.TWITCH_SUB_CLIENT_ID,
+    Authorization: `Bearer ${process.env.TWITCH_REWARDS_TOKEN}`
+  },
+});
+
 async function getChannel(channelId) {
   const { data } = await twitchAPI.get(`/channels/${channelId}`);
   return data;
@@ -61,6 +69,13 @@ async function getChannelByUsername(username) {
   throw new Error('Not Found!');
 }
 
+async function updateRedemption(redemption) {
+  const { data } = await helixAPI.patch(`/channel_points/custom_rewards/redemptions?id=${redemption.id}&reward_id=${redemption.reward.id}&broadcaster_id=${redemption.channel_id}`, {
+    status: 'FULFILLED',
+  });
+  return data;
+}
+
 module.exports = {
   getChannel,
   getChannelByUsername,
@@ -69,4 +84,5 @@ module.exports = {
   getUserFollow,
   getUsers,
   getChannelFollows,
+  updateRedemption,
 };

@@ -4,6 +4,10 @@ const {
   twitchRewards,
 } = require('../../db');
 
+const {
+  updateRedemption,
+} = require('../../lib/twitchAPI');
+
 class TwitchRewardsService {
   constructor(app) {
     const init_topics = [{
@@ -28,6 +32,28 @@ class TwitchRewardsService {
         $ne: true,
       },
     });
+  }
+
+  async patch(_id, updates) {
+    let redemption;
+    // TODO: this doesn't work because the rewards were created with a different client_id... thanks for wasting my time twitch api.
+    // if (updates.ack) {
+    //   const existing = await twitchRewards.findOne({
+    //     _id,
+    //   });
+    //   redemption = await updateRedemption(existing.redemption);
+    // }
+    const updated = await twitchRewards.findOneAndUpdate({
+      _id,
+    }, {
+      $set: {
+        ...updates,
+        redemption,
+      },
+    }, {
+      upsert: true,
+    });
+    return updated;
   }
 
   async create(data) {

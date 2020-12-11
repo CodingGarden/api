@@ -1,5 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable class-methods-use-this */
+const { sub } = require('date-fns');
+
 const {
   twitchCommands,
 } = require('../../db');
@@ -46,7 +48,9 @@ class VoxPopuliService {
       },
       created_at: {
         // $gt: new Date('2020-05-20'),
-        $gt: new Date('2020-09-01'),
+        $gte: sub(new Date(), {
+          days: 7,
+        }),
       },
     });
     const names = [...new Set(messages.map((user) => user.username))];

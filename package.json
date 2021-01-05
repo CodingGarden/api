@@ -20,7 +20,7 @@
     "@feathersjs/express": "^4.5.7",
     "@feathersjs/feathers": "^4.5.7",
     "@feathersjs/socketio": "^4.5.7",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
     "date-fns": "^2.15.0",
     "dotenv": "^8.2.0",

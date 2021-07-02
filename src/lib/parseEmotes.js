@@ -73,7 +73,7 @@ module.exports = async function parseEmotes(message, messageEmotes = {}) {
       messageEmotes[id].forEach((startEnd) => {
         const [start, end] = startEnd.split('-');
         starts[start] = {
-          url: `![](https://static-cdn.jtvnw.net/emoticons/v1/${id}/4.0#emote)`,
+          url: `![](https://static-cdn.jtvnw.net/emoticons/v2/${id}/default/dark/4.0#emote)`,
           end,
         };
       });

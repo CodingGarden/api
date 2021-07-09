@@ -1,4 +1,6 @@
-const { sub } = require('date-fns');
+const {
+  sub
+} = require('date-fns');
 const {
   twitchCommands,
   counter,
@@ -49,7 +51,13 @@ class TwitchCommandsService {
   }
 
   async remove(id) {
-    await twitchCommands.update({ id }, { $set: { deleted_at: new Date() } });
+    await twitchCommands.update({
+      id
+    }, {
+      $set: {
+        deleted_at: new Date()
+      }
+    });
     return id;
   }
 
@@ -72,16 +80,18 @@ class TwitchCommandsService {
       const question = await twitchCommands.findOne({
         num,
       });
-      if (question && !question.archived && !question.deleted_at && (message.badges.moderator
-        || message.badges.broadcaster
-        || question.user_id === message.user_id)) {
+      if (question && !question.archived && !question.deleted_at && (message.badges.moderator ||
+          message.badges.broadcaster ||
+          question.user_id === message.user_id)) {
         await this.app.service('vox/populi').remove(question._id);
       }
     } else if (message.message.match(/^!(ask|idea|submit)/)) {
       const count = await counter.findOneAndUpdate({
         name: 'question',
       }, {
-        $inc: { value: 1 }
+        $inc: {
+          value: 1
+        }
       }, {
         upsert: true,
       });

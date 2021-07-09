@@ -1,6 +1,12 @@
 const TPS = require('twitchps');
 
 const {
+  TWITCH_CHANNEL_ID,
+  Developing,
+  TWITCH_REWARDS_TOKEN,
+} = process.env;
+
+const {
   twitchRewards,
 } = require('../../db');
 
@@ -11,14 +17,14 @@ const {
 class TwitchRewardsService {
   constructor(app) {
     const init_topics = [{
-      topic: 'channel-points-channel-v1.413856795',
+      topic: `channel-points-channel-v1.${TWITCH_CHANNEL_ID}`,
       token: process.env.TWITCH_REWARDS_TOKEN,
     }];
 
     const pubSub = new TPS({
       init_topics,
       reconnect: true,
-      debug: false,
+      debug: Developing ? true : false,
     });
 
     pubSub.on('channel-points', async (data) => {

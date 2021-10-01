@@ -1,12 +1,11 @@
-const axios = require('axios');
+const countriesJSON = require('./countries.json');
 
 let countries;
 
 async function getCountries() {
   if (countries) return countries;
   countries = new Map();
-  const { data } = await axios.get('https://restcountries.eu/rest/v2/all?fields=alpha2Code;name;altSpellings;');
-  data.forEach((country) => {
+  countriesJSON.forEach((country) => {
     const item = {
       code: country.alpha2Code.toLowerCase(),
       name: country.name,

@@ -33,7 +33,6 @@ class TwitchUsersService {
     }
     try {
       const [updatedUser] = await getUsers(name);
-      console.log({ updatedUser });
       if (updatedUser) {
         const createdUser = await this.create(updatedUser);
         cache.set(name, {
@@ -137,8 +136,6 @@ class TwitchUsersService {
   }
 
   async create(user) {
-    user.id = user._id;
-    delete user._id;
     const follow = await getUserFollow(user.id, channelId);
     user.follow = follow;
     user.subscription = false;

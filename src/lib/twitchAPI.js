@@ -50,7 +50,7 @@ async function getUserFollow(userId, channelId) {
 }
 
 async function getUsers(...usernames) {
-  const { data: { users } } = await helixAPI.get(`/users?login=${usernames.map((u) => encodeURIComponent(u)).join('&login=')}`);
+  const { data: users } = await helixAPI.get(`/users?login=${usernames.map((u) => encodeURIComponent(u)).join('&login=')}`);
   return users;
 }
 

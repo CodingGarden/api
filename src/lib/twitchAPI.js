@@ -39,7 +39,7 @@ async function getStream(channelId) {
 
 async function getUserFollow(userId, channelId) {
   try {
-    const { data: [follow] } = await helixAPI.get(`/users/follows?to_id=${channelId}&from_id=${userId}`);
+    const { data: { data: [follow] } } = await helixAPI.get(`/users/follows?to_id=${channelId}&from_id=${userId}`);
     if (!follow) return false;
     // TODO: missing notifications property...
     return { created_at: follow.followed_at };

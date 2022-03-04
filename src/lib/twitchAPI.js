@@ -1,24 +1,15 @@
 const axios = require('axios');
 
-const twitchAPI = axios.create({
-  baseURL: 'https://api.twitch.tv/kraken',
-  headers: {
-    'Client-ID': process.env.TWITCH_SUB_CLIENT_ID,
-    Accept: 'application/vnd.twitchtv.v5+json',
-    Authorization: `Bearer ${process.env.TWITCH_SUB_OAUTH_TOKEN}`
-  },
-});
-
 const helixAPI = axios.create({
   baseURL: 'https://api.twitch.tv/helix',
   headers: {
     'Client-ID': process.env.TWITCH_SUB_CLIENT_ID,
-    Authorization: `Bearer ${process.env.TWITCH_REWARDS_TOKEN}`
+    Authorization: `Bearer ${process.env.TWITCH_SUB_OAUTH_TOKEN}`
   },
 });
 
 async function getChannel(channelId) {
-  const { data } = await twitchAPI.get(`/channels/${channelId}`);
+  const { data } = await helixAPI.get(`/channels?broadcaster_id=${channelId}`);
   return data;
 }
 
@@ -28,7 +19,7 @@ async function getChannelFollows(channelId, cursor = '', followers = []) {
       _cursor,
       follows
     }
-  } = await twitchAPI.get(`/channels/${channelId}/follows?limit=100&cursor=${cursor}`);
+  } = await helixAPI.get(`/users/follows?to_id=${channelId}&first=100&after=${cursor}`);
   if (_cursor) {
     return followers.concat(await getChannelFollows(channelId, _cursor, follows));
   }
@@ -37,19 +28,21 @@ async function getChannelFollows(channelId, cursor = '', followers = []) {
 }
 
 async function getTeam(teamName) {
-  const { data: { users } } = await twitchAPI.get(`/teams/${teamName}`);
+  const { data: { users } } = await helixAPI.get(`/teams?name=${teamName}`);
   return users;
 }
 
 async function getStream(channelId) {
-  const { data: { stream } } = await twitchAPI.get(`/streams/${channelId}`);
+  const { data: [stream] } = await helixAPI.get(`/streams?user_id=${channelId}`);
   return stream;
 }
 
 async function getUserFollow(userId, channelId) {
   try {
-    const { data: { created_at, notifications } } = await twitchAPI.get(`/users/${userId}/follows/channels/${channelId}`);
-    return { created_at, notifications };
+    const { data: [follow] } = await helixAPI.get(`/users/follows?to_id=${channelId}&from_id=${userId}`);
+    if (!follow) return false;
+    // TODO: missing notifications property...
+    return { created_at: follow.followed_at };
   } catch (error) {
     console.log(userId, error.response.data);
     return false;
@@ -57,7 +50,7 @@ async function getUserFollow(userId, channelId) {
 }
 
 async function getUsers(...usernames) {
-  const { data: { users } } = await twitchAPI.get(`/users?login=${encodeURIComponent(usernames.join(','))}`);
+  const { data: { users } } = await helixAPI.get(`/users?login=${usernames.map((u) => encodeURIComponent(u)).join('&login=')}`);
   return users;
 }
 

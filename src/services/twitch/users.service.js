@@ -33,6 +33,7 @@ class TwitchUsersService {
     }
     try {
       const [updatedUser] = await getUsers(name);
+      console.log({ updatedUser });
       if (updatedUser) {
         const createdUser = await this.create(updatedUser);
         cache.set(name, {

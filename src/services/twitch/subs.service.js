@@ -53,7 +53,7 @@ const helixAPI = axios.create({
 });
 
 const {
-  CHANNEL_ID,
+  TWITCH_CHANNEL_ID,
 } = process.env;
 
 async function getSubsPage(cursor = '', all = []) {
@@ -66,7 +66,7 @@ async function getSubsPage(cursor = '', all = []) {
       pagination: { cursor: next_cursor },
     },
   } = await helixAPI.get(
-    `/subscriptions?broadcaster_id=${CHANNEL_ID}&first=100&after=${cursor}`,
+    `/subscriptions?broadcaster_id=${TWITCH_CHANNEL_ID}&first=100&after=${cursor}`,
   );
   all = all.concat(subscriptions);
   console.log('Got', all.length, 'of', total, 'subs');
@@ -93,7 +93,7 @@ async function getSubs() {
       usersById[id] = user;
       return user;
     })
-    .filter((user) => user.id !== CHANNEL_ID);
+    .filter((user) => user.id !== TWITCH_CHANNEL_ID);
   return {
     users,
     levels,

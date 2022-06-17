@@ -54,6 +54,7 @@ async function getUsers(...usernames) {
   const { data: { data: users } } = await helixAPI.get(url);
   return users.map((u) => {
     u.name = u.login;
+    u.logo = u.profile_image_url;
     return u;
   });
 }

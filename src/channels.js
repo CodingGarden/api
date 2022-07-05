@@ -14,7 +14,7 @@ module.exports = function channels(app) {
     const all = [];
     if (hook.path === 'vox/populi' || hook.path === 'twitch/users') {
       all.push(app.channel('anonymous'));
-    } else if (hook.path === 'twitch/chat' || hook.path === 'twitch/rewards') {
+    } else if (hook.path === 'twitch/chat' || hook.path === 'twitch/rewards' || hook.path === 'twitch/commands') {
       all.push(app.channel('api-key'));
     }
     return all;

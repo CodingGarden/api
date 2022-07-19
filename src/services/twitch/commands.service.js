@@ -78,6 +78,8 @@ class TwitchCommandsService {
         await this.app.service('vox/populi').remove(question._id);
       }
     } else if (message.message.match(/^!(ask|idea|submit)/)) {
+      const [, ...args] = message.message.split(' ');
+      if (!args.join(' ').trim()) return;
       const count = await counter.findOneAndUpdate({
         name: 'question',
       }, {
@@ -122,27 +124,46 @@ class TwitchCommandsService {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
       if (command === 'country' || command === 'flag') {
-        const countryLookup = args.shift().toLowerCase();
-        const countries = await getCountries();
-        const country = countries.get(countryLookup);
-        if (country) {
-          user.country = country;
+        const countryLookup = args.shift().toLowerCase().trim();
+        if (countryLookup === 'clear' || countryLookup === 'remove') {
+          user.country = undefined;
           await this.app.service('twitch/users').patch(user.name, {
-            country,
+            country: undefined,
           });
+        } else {
+          const countries = await getCountries();
+          const country = countries.get(countryLookup);
+          if (country) {
+            user.country = country;
+            await this.app.service('twitch/users').patch(user.name, {
+              country,
+            });
+          }
         }
       } else if (command === 'team') {
-        const team = args.shift().toLowerCase();
-        const brands = await getBrands();
-        if (brands.has(team)) {
-          user.team = team;
+        const team = args.shift().toLowerCase().trim();
+        if (team === 'clear' || team === 'remove') {
+          user.team = undefined;
           await this.app.service('twitch/users').patch(user.name, {
-            team,
+            team: undefined,
           });
+        } else {
+          const brands = await getBrands();
+          if (brands.has(team)) {
+            user.team = team;
+            await this.app.service('twitch/users').patch(user.name, {
+              team,
+            });
+          }
         }
       } else if (command === 'pronoun') {
-        const pronoun = (args.shift() || '').toLowerCase();
-        if (pronounChoices.has(pronoun)) {
+        const pronoun = (args.shift() || '').toLowerCase().trim();
+        if (pronoun === 'clear' || pronoun === 'remove') {
+          user.pronoun = undefined;
+          await this.app.service('twitch/users').patch(user.name, {
+            pronoun: undefined,
+          });
+        } else if (pronounChoices.has(pronoun)) {
           user.pronoun = pronoun;
           await this.app.service('twitch/users').patch(user.name, {
             pronoun,

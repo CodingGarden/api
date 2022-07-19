@@ -70,6 +70,7 @@ class VoxPopuliService {
       if (command.match(topLevelRegex)) {
         if (!message.num) return;
         const value = args.join(' ');
+        if (!value.trim()) return;
         message.content = value;
         if (command === '!ask') {
           questions.push(message);

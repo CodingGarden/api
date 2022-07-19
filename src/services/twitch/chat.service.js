@@ -15,7 +15,7 @@ class TwitchService {
       },
       created_at: {
         $gte: sub(new Date(), {
-          hours: 6,
+          hours: 12,
         }),
       },
       ack: {

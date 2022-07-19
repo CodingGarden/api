@@ -49,7 +49,7 @@ class VoxPopuliService {
       created_at: {
         // $gt: new Date('2020-05-20'),
         $gte: sub(new Date(), {
-          days: 7,
+          days: 60,
         }),
       },
     });

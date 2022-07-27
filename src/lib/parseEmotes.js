@@ -72,8 +72,9 @@ module.exports = async function parseEmotes(message, messageEmotes = {}) {
     const emoteStart = emoteIds.reduce((starts, id) => {
       messageEmotes[id].forEach((startEnd) => {
         const [start, end] = startEnd.split('-');
+        const name = message.substring(+start, +end + 1);
         starts[start] = {
-          url: `![](https://static-cdn.jtvnw.net/emoticons/v2/${id}/default/dark/4.0#emote)`,
+          url: `![${name}](https://static-cdn.jtvnw.net/emoticons/v2/${id}/default/dark/3.0#emote)`,
           end,
         };
       });

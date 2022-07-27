@@ -1,6 +1,7 @@
 const axios = require('axios');
 
 const emotes = {};
+const sources = {};
 let regexStr = '';
 let emoteRegex;
 let lastRequest;
@@ -9,12 +10,16 @@ const emoteTimeout = 24 * 60 * 60 * 1000;
 const appendEmote = (selector) => (emote) => {
   const {
     code,
+    source,
     url
   } = selector(emote);
-  emotes[code.toLowerCase()] = url;
-  regexStr += `${code.toLowerCase().replace(/\(/, '\\(').replace(/\)/, '\\)')}|`;
+  const lowerCaseCode = code.toLowerCase();
+  emotes[lowerCaseCode] = url;
+  sources[lowerCaseCode] = source;
+  regexStr += `${lowerCaseCode.replace(/\(/, '\\(').replace(/\)/, '\\)')}|`;
 };
 
+// TODO: parameterize channel name and ID
 async function getBttvEmotes() {
   let {
     data: allEmotes
@@ -31,6 +36,7 @@ async function getBttvEmotes() {
     id
   }) => ({
     code,
+    source: 'BTTV',
     url: `https://cdn.betterttv.net/emote/${id}/3x`
   }));
   allEmotes.forEach(appenderizer3000);
@@ -45,17 +51,34 @@ async function getFfzEmotes() {
     urls
   }) => ({
     code,
+    source: 'FFZ',
     url: `https:${Object.values(urls).pop()}`
+  }));
+  all.forEach(appenderizer9000);
+}
+
+async function get7tvEmotes() {
+  const { data: globalEmotes } = await axios.get('https://api.7tv.app/v2/emotes/global');
+  const { data: channelEmotes } = await axios.get('https://api.7tv.app/v2/users/413856795/emotes');
+  const all = globalEmotes.concat(channelEmotes);
+  const appenderizer9000 = appendEmote(({
+    name: code,
+    urls
+  }) => ({
+    code,
+    source: '7TV',
+    url: `${urls.pop()[1]}`
   }));
   all.forEach(appenderizer9000);
 }
 
 async function getEmoteRegex() {
   if (!emoteRegex || (lastRequest && lastRequest > Date.now - emoteTimeout)) {
-    console.log('Refreshing BTTV and FFZ cache...');
+    console.log('Refreshing BTTV, 7TV and FFZ cache...');
     await Promise.all([
       getBttvEmotes(),
       getFfzEmotes(),
+      get7tvEmotes(),
     ]);
     lastRequest = Date.now();
     regexStr = regexStr.slice(0, -1);
@@ -74,7 +97,7 @@ module.exports = async function parseEmotes(message, messageEmotes = {}) {
         const [start, end] = startEnd.split('-');
         const name = message.substring(+start, +end + 1);
         starts[start] = {
-          url: `![${name}](https://static-cdn.jtvnw.net/emoticons/v2/${id}/default/dark/3.0#emote)`,
+          url: `![Twitch - ${name}](https://static-cdn.jtvnw.net/emoticons/v2/${id}/default/dark/3.0#emote)`,
           end,
         };
       });
@@ -93,7 +116,7 @@ module.exports = async function parseEmotes(message, messageEmotes = {}) {
     }
   }
   const result = (parsedMessage || message)
-    .replace(emoteRegex, (code) => `![${code}](${emotes[code.toLowerCase()]}#emote)`);
+    .replace(emoteRegex, (code) => `![${sources[code.toLowerCase()]} ${code}](${emotes[code.toLowerCase()]}#emote)`);
   if (result === message) return undefined;
   return result;
 };

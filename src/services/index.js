@@ -10,6 +10,7 @@ const TwitchUsersService = require('./twitch/users.service');
 const TwitchRewardsService = require('./twitch/rewards.service');
 const TwitchLoginService = require('./twitch/login.service');
 const TwitchCommandsService = require('./twitch/commands.service');
+const IconsService = require('./icons/icons.service');
 
 const unAuthorizedMessage = 'Un-Authorized. 👮🚨 This event will be reported to the internet police. 🚨👮';
 
@@ -84,5 +85,6 @@ module.exports = function configure(app) {
       remove: [verifyAPIKey],
     },
   });
+  app.use('icons', new IconsService());
   app.use('twitch/login', new TwitchLoginService(app));
 };

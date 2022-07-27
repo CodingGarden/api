@@ -5,7 +5,7 @@ const {
 } = require('../../db');
 const pronounChoices = require('../../lib/validPronounChoices');
 const getCountries = require('../../lib/getCountries');
-const getBrands = require('../../lib/getBrands');
+const { simpleIcons, fontAwesome } = require('../../lib/getIcons');
 
 class TwitchCommandsService {
   constructor(app) {
@@ -147,14 +147,11 @@ class TwitchCommandsService {
           await this.app.service('twitch/users').patch(user.name, {
             team: undefined,
           });
-        } else {
-          const brands = await getBrands();
-          if (brands.has(team)) {
-            user.team = team;
-            await this.app.service('twitch/users').patch(user.name, {
-              team,
-            });
-          }
+        } else if (fontAwesome.has(team) || simpleIcons.has(team)) {
+          user.team = team;
+          await this.app.service('twitch/users').patch(user.name, {
+            team,
+          });
         }
       } else if (command === 'pronoun') {
         const pronoun = (args.shift() || '').toLowerCase().trim();

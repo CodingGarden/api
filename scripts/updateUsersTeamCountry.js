@@ -1,6 +1,6 @@
 const app = require('../src/app');
 const users = require('./users.json');
-const getBrands = require('../src/lib/getBrands');
+const getBrands = require('../src/lib/getIcons');
 const getCountries = require('../src/lib/getCountries');
 
 async function updateUsersTeamCountry() {

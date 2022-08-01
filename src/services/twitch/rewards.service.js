@@ -8,10 +8,14 @@ const {
   updateRedemption,
 } = require('../../lib/twitchAPI');
 
+const {
+  TWITCH_CHANNEL_ID: channelId
+} = process.env;
+
 class TwitchRewardsService {
   constructor(app) {
     const init_topics = [{
-      topic: 'channel-points-channel-v1.413856795',
+      topic: `channel-points-channel-v1.${channelId}`,
       token: process.env.TWITCH_REWARDS_TOKEN,
     }];
 

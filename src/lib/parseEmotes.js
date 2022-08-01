@@ -116,7 +116,7 @@ module.exports = async function parseEmotes(message, messageEmotes = {}) {
     }
   }
   const result = (parsedMessage || message)
-    .replace(emoteRegex, (code) => `![${sources[code.toLowerCase()]} ${code}](${emotes[code.toLowerCase()]}#emote)`);
+    .replace(emoteRegex, (code) => `![${sources[code.toLowerCase()]} - ${code}](${emotes[code.toLowerCase()]}#emote)`);
   if (result === message) return undefined;
   return result;
 };

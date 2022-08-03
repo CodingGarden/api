@@ -72,7 +72,7 @@ async function get7tvEmotes() {
 }
 
 async function getEmoteRegex() {
-  if (!emoteRegex || (lastRequest && lastRequest > Date.now() - emoteTimeout)) {
+  if (!emoteRegex || (lastRequest && Date.now() - lastRequest > emoteTimeout)) {
     console.log('Refreshing BTTV, 7TV and FFZ cache...');
     await Promise.all([
       getBttvEmotes(),

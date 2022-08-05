@@ -19,7 +19,6 @@ const appendEmote = (selector) => (emote) => {
   regexStr += `${lowerCaseCode.replace(/\(/, '\\(').replace(/\)/, '\\)')}|`;
 };
 
-// TODO: parameterize channel name and ID
 async function getBttvEmotes() {
   let {
     data: allEmotes
@@ -29,7 +28,7 @@ async function getBttvEmotes() {
       channelEmotes,
       sharedEmotes
     }
-  } = await axios.get('https://api.betterttv.net/3/cached/users/twitch/413856795');
+  } = await axios.get(`https://api.betterttv.net/3/cached/users/twitch/${process.env.TWITCH_CHANNEL_ID}`);
   allEmotes = allEmotes.concat(channelEmotes).concat(sharedEmotes);
   const appenderizer3000 = appendEmote(({
     code,
@@ -44,7 +43,7 @@ async function getBttvEmotes() {
 
 async function getFfzEmotes() {
   const { data: { sets } } = await axios.get('https://api.frankerfacez.com/v1/set/global');
-  const { data: { sets: channelSets } } = await axios.get('https://api.frankerfacez.com/v1/room/codinggarden');
+  const { data: { sets: channelSets } } = await axios.get(`https://api.frankerfacez.com/v1/room/${process.env.TWITCH_CHANNEL_NAME}`);
   const all = sets[3].emoticons.concat(channelSets[609613].emoticons);
   const appenderizer9000 = appendEmote(({
     name: code,
@@ -59,7 +58,7 @@ async function getFfzEmotes() {
 
 async function get7tvEmotes() {
   const { data: globalEmotes } = await axios.get('https://api.7tv.app/v2/emotes/global');
-  const { data: channelEmotes } = await axios.get('https://api.7tv.app/v2/users/413856795/emotes');
+  const { data: channelEmotes } = await axios.get(`https://api.7tv.app/v2/users/${process.env.TWITCH_CHANNEL_ID}/emotes`);
   const all = globalEmotes.concat(channelEmotes);
   const appenderizer9000 = appendEmote(({
     name: code,
@@ -73,7 +72,7 @@ async function get7tvEmotes() {
 }
 
 async function getEmoteRegex() {
-  if (!emoteRegex || (lastRequest && lastRequest > Date.now - emoteTimeout)) {
+  if (!emoteRegex || (lastRequest && Date.now() - lastRequest > emoteTimeout)) {
     console.log('Refreshing BTTV, 7TV and FFZ cache...');
     await Promise.all([
       getBttvEmotes(),
@@ -116,7 +115,7 @@ module.exports = async function parseEmotes(message, messageEmotes = {}) {
     }
   }
   const result = (parsedMessage || message)
-    .replace(emoteRegex, (code) => `![${sources[code.toLowerCase()]} ${code}](${emotes[code.toLowerCase()]}#emote)`);
+    .replace(emoteRegex, (code) => `![${sources[code.toLowerCase()]} - ${code}](${emotes[code.toLowerCase()]}#emote)`);
   if (result === message) return undefined;
   return result;
 };

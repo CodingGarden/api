@@ -124,7 +124,6 @@ class TwitchCommandsService {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
       if (args.length === 0) return;
-      console.log('SETTING', command, 'TO', args.join(' '), 'for', user.name);
       if (command === 'country' || command === 'flag') {
         const countryLookup = args.shift().toLowerCase().trim();
         if (countryLookup === 'clear' || countryLookup === 'remove') {
@@ -162,7 +161,7 @@ class TwitchCommandsService {
           await this.app.service('twitch/users').patch(user.name, {
             team_color: undefined,
           });
-        } else if ([3, 6].includes(color.length) && color.match(/^([a-f0-9])$/)) {
+        } else if (color.match(/^(([a-f0-9]){3}){1,2}$/)) {
           user.team_color = color;
           await this.app.service('twitch/users').patch(user.name, {
             team_color: color,

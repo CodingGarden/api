@@ -15,7 +15,7 @@ class VoxPopuliService {
   constructor(app) {
     this.app = app;
     app.service('twitch/commands').on('created', (message) => {
-      if (message.message.match(eventRegex)) {
+      if (message.message && message.message.match(eventRegex)) {
         app.service('vox/populi').create(message);
       }
     });

@@ -124,6 +124,7 @@ class TwitchCommandsService {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
       if (args.length === 0) return;
+      console.log('SETTING', command, 'TO', args.join(' '), 'for', user.name);
       if (command === 'country' || command === 'flag') {
         const countryLookup = args.shift().toLowerCase().trim();
         if (countryLookup === 'clear' || countryLookup === 'remove') {

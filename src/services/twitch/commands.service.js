@@ -123,6 +123,7 @@ class TwitchCommandsService {
     } else if (message.message.match(/^!(country|flag|team|pronoun)/)) {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
+      if (!args.length) return;
       if (command === 'country' || command === 'flag') {
         const countryLookup = args.shift().toLowerCase().trim();
         if (countryLookup === 'clear' || countryLookup === 'remove') {
@@ -151,6 +152,19 @@ class TwitchCommandsService {
           user.team = team;
           await this.app.service('twitch/users').patch(user.name, {
             team,
+          });
+        }
+      } else if (command === 'team-color' || command === 'team-colour') {
+        const color = args.shift().toLowerCase().trim().replace('#', '');
+        if (color === 'clear' || color === 'remove') {
+          user.team_color = undefined;
+          await this.app.service('twitch/users').patch(user.name, {
+            team_color: undefined,
+          });
+        } else if ([3, 6].includes(color.length) && color.match(/^([a-f0-9])$/)) {
+          user.team_color = color;
+          await this.app.service('twitch/users').patch(user.name, {
+            team_color: color,
           });
         }
       } else if (command === 'pronoun') {

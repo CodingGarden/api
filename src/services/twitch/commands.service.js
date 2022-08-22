@@ -120,10 +120,10 @@ class TwitchCommandsService {
       await this.app.service('twitch/users').patch(user.name, {
         status: null,
       });
-    } else if (message.message.match(/^!(country|flag|team|pronoun)/)) {
+    } else if (message.message.match(/^!(country|flag|team|team-color|team-colour|pronoun)/)) {
       const args = message.message.split(' ');
       const command = args.shift().slice(1);
-      if (!args.length) return;
+      if (args.length === 0) return;
       if (command === 'country' || command === 'flag') {
         const countryLookup = args.shift().toLowerCase().trim();
         if (countryLookup === 'clear' || countryLookup === 'remove') {

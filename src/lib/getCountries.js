@@ -1,21 +1,21 @@
-const countriesJSON = require('./countries.json');
+const axios = require('axios');
 
 let countries;
 
 async function getCountries() {
   if (countries) return countries;
-  countries = new Map();
-  countriesJSON.forEach((country) => {
-    const item = {
-      code: country.alpha2Code.toLowerCase(),
-      name: country.name,
-    };
-    countries.set(item.code.toLowerCase(), item);
-    countries.set(country.name.toLowerCase(), item);
-    country.altSpellings.forEach((alt) => {
-      countries.set(alt.toLowerCase(), item);
+  countries = (async () => {
+    const { data } = await axios.get('https://iso-3166-flags.netlify.app/dist/metadata.json');
+    const result = new Map();
+    data.forEach((info) => {
+      const item = {
+        code: info.route,
+        name: info.name,
+      };
+      result.set(item.code, item);
     });
-  });
+    return result;
+  })();
   return countries;
 }
 

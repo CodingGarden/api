@@ -14,7 +14,15 @@ const client = new tmi.Client({
   },
   channels: [process.env.TWITCH_CHANNEL_NAME]
 });
-client.connect();
+client
+  .connect()
+  .then(() => {
+    console.log('Connected to twitch chat...');
+  })
+  .catch((error) => {
+    console.log(error);
+    console.log('Error connecting to twitch...', error.message);
+  });
 
 function listenChats(app) {
   client.on('message', async (channel, tags, message) => {

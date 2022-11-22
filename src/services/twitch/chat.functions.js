@@ -54,9 +54,9 @@ async function createMessage(tags, message, app) {
 function listenChats(app) {
   client.on('raw_message', (messageClone) => {
     if (messageClone.command === 'USERNOTICE') {
-      messageClone.tags.badges = tmiParser.badges(messageClone.tags);
-      messageClone.tags.badge_info = tmiParser.badgeInfo(messageClone.tags);
-      messageClone.tags.emotes = tmiParser.emotes(messageClone.tags);
+      tmiParser.badges(messageClone.tags);
+      tmiParser.badgeInfo(messageClone.tags);
+      tmiParser.emotes(messageClone.tags);
       createMessage(messageClone.tags, messageClone.params[1], app);
     }
   });

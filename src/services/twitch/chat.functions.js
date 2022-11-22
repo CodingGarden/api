@@ -24,30 +24,39 @@ client
     console.log('Error connecting to twitch...', error.message);
   });
 
+async function createMessage(tags, message, app) {
+  tags.badges = tags.badges || {};
+  const item = Object.entries(tags).reduce((all, [key, value]) => {
+    all[key.replace(/-/g, '_')] = value;
+    return all;
+  }, {});
+  item.name = item.display_name || item.username;
+  item.created_at = new Date(+item.tmi_sent_ts);
+  item.deleted_at = null;
+  item.message = message;
+  try {
+    item.parsedMessage = await parseEmotes(message, item.emotes);
+  } catch (error) {
+    console.error('error parsing emotes...', error.message, item);
+  }
+  if (message.match(/^!\w/)) {
+    item.args = message.split(' ');
+    item.command = item.args.shift().slice(1);
+    app.service('twitch/commands').create(item);
+  } else {
+    app.service('twitch/chat').create(item);
+  }
+}
+
 function listenChats(app) {
-  client.on('message', async (channel, tags, message) => {
+  client.on('raw_message', (messageClone) => {
+    if (messageClone.command === 'USERNOTICE') {
+      createMessage(messageClone.tags, messageClone.params[1], app);
+    }
+  });
+  client.on('message', (channel, tags, message) => {
     if (tags['message-type'] === 'whisper') return;
-    tags.badges = tags.badges || {};
-    const item = Object.entries(tags).reduce((all, [key, value]) => {
-      all[key.replace(/-/g, '_')] = value;
-      return all;
-    }, {});
-    item.name = item.display_name || item.username;
-    item.created_at = new Date(+item.tmi_sent_ts);
-    item.deleted_at = null;
-    item.message = message;
-    try {
-      item.parsedMessage = await parseEmotes(message, item.emotes);
-    } catch (error) {
-      console.error('error parsing emotes...', error.message, item);
-    }
-    if (message.match(/^!\w/)) {
-      item.args = message.split(' ');
-      item.command = item.args.shift().slice(1);
-      app.service('twitch/commands').create(item);
-    } else {
-      app.service('twitch/chat').create(item);
-    }
+    createMessage(tags, message, app);
   });
   client.on('timeout', async (channel, username, reason, duration, tags) => {
     const user_id = tags['target-user-id'];

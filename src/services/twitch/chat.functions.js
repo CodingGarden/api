@@ -30,7 +30,8 @@ async function createMessage(tags, message, app) {
     all[key.replace(/-/g, '_')] = value;
     return all;
   }, {});
-  item.name = item.display_name || item.username;
+  item.username = item.login || item.username;
+  item.name = item.display_name || item.login || item.username;
   item.created_at = new Date(+item.tmi_sent_ts);
   item.deleted_at = null;
   item.message = message;

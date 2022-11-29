@@ -56,6 +56,19 @@ const {
   TWITCH_CHANNEL_ID,
 } = process.env;
 
+async function getSubCount() {
+  const {
+    data: {
+      total,
+    },
+  } = await helixAPI.get(
+    `/subscriptions?broadcaster_id=${TWITCH_CHANNEL_ID}&first=1`,
+  );
+  return {
+    total,
+  };
+}
+
 async function getSubsPage(cursor = '', all = []) {
   console.log('Gettting sub cursor', cursor);
   const beforeLength = all.length;
@@ -122,6 +135,9 @@ class TwitchSubs {
   }
 
   async find(params) {
+    if (params.query.count) {
+      return getSubCount();
+    }
     if (!this.data) {
       this.data = getSubs();
       lastRequest = Date.now();

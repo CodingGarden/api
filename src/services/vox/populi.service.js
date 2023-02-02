@@ -122,9 +122,9 @@ class VoxPopuliService {
     });
     if (message) {
       delete this.allByNum[message.num];
-      this.data.questions = this.data.questions.filter((item) => item._id != _id);
-      this.data.ideas = this.data.ideas.filter((item) => item._id != _id);
-      this.data.submissions = this.data.submissions.filter((item) => item._id != _id);
+      this.data.questions = this.data.questions.filter((item) => item._id.toString() != _id);
+      this.data.ideas = this.data.ideas.filter((item) => item._id.toString() != _id);
+      this.data.submissions = this.data.submissions.filter((item) => item._id.toString() != _id);
       return message;
     }
     throw new Error('Not found.');

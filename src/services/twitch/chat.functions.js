@@ -27,6 +27,7 @@ client
   });
 
 async function createMessage(tags, message, app) {
+  message = message || '';
   tags.badges = tags.badges || {};
   const item = Object.entries(tags).reduce((all, [key, value]) => {
     all[key.replace(/-/g, '_')] = value;

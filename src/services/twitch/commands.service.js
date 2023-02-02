@@ -1,3 +1,5 @@
+// @ts-check
+
 const { sub } = require('date-fns');
 const {
   twitchCommands,
@@ -72,9 +74,11 @@ class TwitchCommandsService {
       const question = await twitchCommands.findOne({
         num,
       });
-      if (question && !question.archived && !question.deleted_at && (message.badges.moderator
+      const isNotArchivedOrDeleted = question && !question.archived && !question.deleted_at;
+      const isModOrOwner = !!(message.badges.moderator
         || message.badges.broadcaster
-        || question.user_id === message.user_id)) {
+        || question.user_id === message.user_id);
+      if (isNotArchivedOrDeleted && isModOrOwner) {
         await this.app.service('vox/populi').remove(question._id);
       }
     } else if (message.message.match(/^!(ask|idea|submit)/)) {

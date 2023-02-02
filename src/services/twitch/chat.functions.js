@@ -27,6 +27,12 @@ client
   });
 
 async function createMessage(tags, message, app) {
+  if (!message) {
+    console.log('empty message', JSON.stringify({
+      tags,
+      message
+    }, null, 2));
+  }
   message = message || '';
   tags.badges = tags.badges || {};
   const item = Object.entries(tags).reduce((all, [key, value]) => {
@@ -58,6 +64,8 @@ function listenChats(app) {
       tmiParser.badges(messageClone.tags);
       tmiParser.badgeInfo(messageClone.tags);
       tmiParser.emotes(messageClone.tags);
+
+      // TODO: look at msg-id for empty messages
       createMessage(messageClone.tags, messageClone.params[1], app);
     }
   });

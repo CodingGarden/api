@@ -2,6 +2,12 @@ const monk = require('monk');
 
 const db = monk(process.env.MONGO_URI);
 
+const youtubeChats = db.get('youtube-chats');
+youtubeChats.createIndex('id author_id author_display_name author_handle message live_chat_id');
+
+const youtubeUsers = db.get('youtube-users');
+youtubeUsers.createIndex('id display_name handle');
+
 const twitchChats = db.get('twitch-chats');
 twitchChats.createIndex('username name userId id created_at message');
 
@@ -24,4 +30,6 @@ module.exports = {
   twitchChats,
   twitchUsers,
   counter,
+  youtubeChats,
+  youtubeUsers,
 };

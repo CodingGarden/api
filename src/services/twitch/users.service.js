@@ -147,7 +147,7 @@ class TwitchUsersService {
           created_at: subscription.level.created_at
         };
       }
-    } catch(error) {
+    } catch (error) {
       console.log('error retrieving subs...', error.message, user);
     }
     const createdUser = await twitchUsers.findOneAndUpdate({

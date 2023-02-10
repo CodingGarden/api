@@ -44,7 +44,7 @@ async function getLiveStreamChats(liveChatId, pageToken) {
 
 async function getUsers(...ids) {
   const params = new URLSearchParams({
-    part: 'snippet',
+    part: 'id,snippet',
     id: ids.join(','),
     maxResults: 50,
   });
@@ -57,6 +57,14 @@ async function getUsers(...ids) {
     logo: item.snippet.thumbnails.default.url,
     created_at: new Date(item.snippet.publishedAt),
   }));
+}
+
+async function getChannelMeta(id) {
+  const { data } = await youtubeAPI(`/channels?part=about,approval&id=${id}`);
+  if (data.items) {
+    return data.items[0];
+  }
+  return null;
 }
 
 class YTLiveChatManager {
@@ -102,6 +110,7 @@ class YTLiveChatManager {
 }
 
 module.exports = {
+  getChannelMeta,
   getLiveEvents,
   getLiveStreamDetails,
   getUsers,

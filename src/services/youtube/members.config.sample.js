@@ -7,51 +7,61 @@ const referrer = ''; // FILL ME IN
 
 const headers = {
   accept: '*/*',
-  'accept-language': 'en-US,en;q=0.9,es;q=0.8',
-  authorization: '', // FILL ME IN
+  'accept-language': 'en-US,en;q=0.5',
+  authorization:
+    '', // FILL ME IN
   'cache-control': 'no-cache',
   'content-type': 'application/json',
   pragma: 'no-cache',
-  'sec-ch-ua': '"Google Chrome 79"',
-  'sec-fetch-dest': 'empty',
-  'sec-fetch-mode': 'cors',
-  'sec-fetch-site': 'same-origin',
-  'x-client-data': '', // FILL ME IN
-  'x-goog-authuser': '0',
-  'x-goog-visitor-id': '', // FILL ME IN
-  'x-origin': 'https://studio.youtube.com',
-  'x-youtube-ad-signals': '', // FILL ME IN
-  'x-youtube-client-name': '62',
-  'x-youtube-client-version': '1.20191218.0.0',
-  'x-youtube-time-zone': '', // FILL ME IN
-  'x-youtube-utc-offset': '', // FILL ME IN
+  'Sec-Fetch-Dest': 'empty',
+  'Sec-Fetch-Mode': 'cors',
+  'Sec-Fetch-Site': 'same-origin',
+  'Sec-GPC': '1',
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/110.0',
+  'X-Goog-AuthUser': '0',
+  'X-Goog-PageId': '109069981838370619794',
+  'X-Goog-Visitor-Id': '', // FILL ME IN
+  'X-Origin': 'https://studio.youtube.com',
+  'X-YouTube-Ad-Signals': '', // FILL ME IN
+  'X-YouTube-Client-Name': '62',
+  'X-YouTube-Client-Version': '1.20230206.03.00',
+  'X-YouTube-Delegation-Context': '', // FILL ME IN
+  'X-YouTube-Page-CL': '507507627',
+  'X-YouTube-Page-Label': 'youtube.studio.web_20230206_03_RC00',
+  'X-YouTube-Time-Zone': 'America/Denver',
+  'X-YouTube-Utc-Offset': '-420',
   cookie,
+  origin: 'https://studio.youtube.com',
+  DNT: '1',
+  referrer,
 };
 
 const client = {
   clientName: 62,
-  clientVersion: '1.20191218.0.0',
+  clientVersion: '1.20230206.03.00',
   hl: 'en',
   gl: 'US',
-  experimentsToken: '', // FILL ME IN
+  experimentsToken: '',
+  utcOffsetMinutes: -420,
+  userInterfaceTheme: 'USER_INTERFACE_THEME_DARK',
+  screenWidthPoints: 991,
+  screenHeightPoints: 859,
+  screenPixelDensity: 2,
+  screenDensityFloat: 2
 };
 
 const user = {
   onBehalfOfUser: '', // FILL ME IN
+  delegationContext: {
+    externalChannelId: '', // FILL ME IN
+    roleType: { channelRoleType: 'CREATOR_CHANNEL_ROLE_TYPE_OWNER' }
+  },
+  serializedDelegationContext: '' // FILL ME IN
 };
 
 const request = {
   returnLogEntry: true,
-  internalExperimentFlags: [{
-    key: 'force_route_innertube_shopping_settings_to_outertube',
-    value: 'true',
-  }, {
-    key: 'force_route_delete_playlist_to_outertube',
-    value: 'false',
-  }, {
-    key: 'force_live_chat_merchandise_upsell',
-    value: 'false',
-  }],
+  internalExperimentFlags: []
 };
 
 const clientScreenNonce = ''; // FILL ME IN

@@ -1,7 +1,11 @@
 /* eslint-disable no-await-in-loop */
 const {
-  getUsers
+  getUsers,
+  getChannelMeta,
 } = require('../../lib/youtubeAPI');
+const {
+  getModerators
+} = require('./members.functions');
 const {
   youtubeUsers,
 } = require('../../db');
@@ -37,9 +41,9 @@ class YouTubeUsersService {
         logo: 'https://cdn.discordapp.com/attachments/639685013964849182/716027585594785852/unknown.png',
         created_at: new Date(),
         updated_at: new Date(),
+        membership: null,
         is_verified: false,
         is_chat_owner: false,
-        is_chat_sponsor: false,
         is_chat_moderator: false,
       };
     } catch (error) {
@@ -49,7 +53,10 @@ class YouTubeUsersService {
   }
 
   async find(params) {
-    const { ids = [] } = params.query;
+    const { ids = [], moderators, nocache = 'false' } = params.query || {};
+    if (moderators) {
+      return getModerators(nocache === 'false');
+    }
     let notFound = [];
     const users = [];
     ids.forEach((id) => {
@@ -130,10 +137,17 @@ class YouTubeUsersService {
 
   async create(user) {
     user.is_chat_owner = user.id === process.env.YOUTUBE_CHANNEL_ID;
-    // TODO:
-    // is_verified: item.authorDetails.isVerified,
-    // is_chat_sponsor: item.authorDetails.isChatSponsor,
-    // is_chat_moderator: item.authorDetails.isChatModerator,
+    const members = await this.app.service('youtube/members').find();
+    user.membership = members.find((member) => member.id === user.id);
+    const channel = await getChannelMeta(user.id);
+    user.is_verified = channel ? channel.approval === 'Verified' : null;
+    user.handle = channel ? channel.about.handle : null;
+    const moderatorsById = await this.find({
+      query: {
+        moderators: true
+      }
+    });
+    user.is_chat_moderator = user.is_chat_owner || !!moderatorsById[user.id];
     const createdUser = await youtubeUsers.findOneAndUpdate({
       id: user.id,
     }, {

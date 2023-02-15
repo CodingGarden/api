@@ -22,6 +22,8 @@ function listenStreamlabs(app) {
       app.service('youtube/members').create({});
     } else if (eventData.for === 'twitch_account' && eventData.type === 'subscription') {
       app.service('twitch/subs').create({});
+    } else if (eventData.for === 'patreon' && eventData.type === 'pledge') {
+      app.service('patreon/pledges').create({});
     }
   });
 }

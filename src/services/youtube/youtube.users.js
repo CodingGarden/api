@@ -47,7 +47,9 @@ class YouTubeUsersService {
         is_chat_moderator: false,
       };
     } catch (error) {
-      console.error(error.response ? error.response.data : error);
+      if (error.response && error.response.data) {
+        console.error(JSON.stringify(error.response.data, null, 2));
+      }
       throw new Error('Not Found', error.message);
     }
   }

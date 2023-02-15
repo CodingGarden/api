@@ -1,9 +1,5 @@
 const {
-  addPledge,
-  addReward,
-  addUser,
   getPledges,
-  verifySecret,
 } = require('./pledges.functions');
 
 class PledgeService {
@@ -28,27 +24,10 @@ class PledgeService {
     return result;
   }
 
-  async create(body, params) {
-    if (!this.data) return { success: true };
-    if (!verifySecret(params.rawBody, params.headers['x-patreon-signature'])) throw new Error('Invalid signature.');
-    const { data, included } = body;
-    if (params.headers['x-patreon-event'] === 'pledges:delete') {
-      delete this.data.users[data.relationships.patron.data.id];
-      delete this.data.pledgesByUserId[data.relationships.patron.data.id];
-      return {
-        type: 'delete',
-        id: data.relationships.patron.data.id,
-      };
-    }
-    addPledge(data, this.data.pledgesByUserId, this.data.rewardIdsByCost);
-    included.forEach((item) => {
-      if (item.type === 'reward') {
-        addReward(item, this.data.rewardsById);
-      } else if (item.type === 'user' && this.data.pledgesByUserId[item.id]) {
-        addUser(item, this.data.pledgesByUserId, this.data.users);
-      }
-    });
-    return this.data.users[data.relationships.patron.data.id];
+  async create() {
+    const oldUsers = this.data.users;
+    this.data = await getPledges({});
+    return Object.values(this.data.users).find((user) => !oldUsers[user.id]);
   }
 }
 

@@ -37,7 +37,13 @@ module.exports = function configure(app) {
     }
   };
   app.use('patreon/pledges', new PledgeService());
-  app.service('patreon/pledges').hooks(apiKeyFindHooks);
+  app.service('patreon/pledges').hooks({
+    before: {
+      get: [verifyAPIKey],
+      find: [verifyAPIKey],
+      create: [internalOnly],
+    }
+  });
   app.use('youtube/chat', new YouTubeChatService(app));
   app.service('youtube/chat').hooks({
     before: {

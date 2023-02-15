@@ -193,7 +193,7 @@ async function getMemberData() {
     externalChannelId,
     sponsorsOptions: {
       pageSize: 100,
-      continuationToken: 'EgwI7q6WnwYQoLOA1gMYAyIAKgYKBAgEEAE',
+      continuationToken: 'EgwI6LyznwYQ6IjL0AIYAyIAKgYKBAgEEAE',
       filter: {},
       order: {
         orderFields: [

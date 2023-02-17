@@ -13,6 +13,7 @@ const TwitchRewardsService = require('./twitch/rewards.service');
 const TwitchLoginService = require('./twitch/login.service');
 const TwitchCommandsService = require('./twitch/commands.service');
 const IconsService = require('./icons/icons.service');
+const GithubSponsorsService = require('./github/sponsors.service');
 
 const unAuthorizedMessage = 'Un-Authorized. 👮🚨 This event will be reported to the internet police. 🚨👮';
 
@@ -110,6 +111,13 @@ module.exports = function configure(app) {
       create: [internalOnly],
       patch: [verifyAPIKey],
       remove: [verifyAPIKey],
+    },
+  });
+  app.use('github/sponsors', new GithubSponsorsService(app));
+  app.service('github/sponsors').hooks({
+    before: {
+      get: [verifyAPIKey],
+      find: [verifyAPIKey],
     },
   });
   app.use('icons', new IconsService());

@@ -1,3 +1,4 @@
+const { YTLiveChatManager } = require('../../lib/youtubeAPI');
 const { listenChats, listenChatsSpecificVideo } = require('./chat.functions');
 const { youtubeChats } = require('../../db');
 
@@ -15,7 +16,12 @@ class YouTubeChatService {
   }
 
   async find() {
-    const messages = await youtubeChats.find();
+    const ids = [...YTLiveChatManager.liveChatListeners.keys()];
+    const messages = await youtubeChats.find({
+      live_chat_id: {
+        $in: ids
+      }
+    });
     return messages;
   }
 

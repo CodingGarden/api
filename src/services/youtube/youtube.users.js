@@ -111,6 +111,7 @@ class YouTubeUsersService {
       }
       return users.concat(createdUsers).concat(existingUsers);
     } catch (error) {
+      console.log(error);
       throw new Error('Not Found');
     }
   }

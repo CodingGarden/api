@@ -10,11 +10,19 @@ module.exports = function channels(app) {
     app.channel('anonymous').join(connection);
   });
 
+  const apiKeyPaths = new Set([
+    'youtube/users',
+    'youtube/chat',
+    'twitch/chat',
+    'twitch/rewards',
+    'twitch/commands'
+  ]);
+
   app.publish((data, hook) => {
     const all = [];
     if (hook.path === 'vox/populi' || hook.path === 'twitch/users') {
       all.push(app.channel('anonymous'));
-    } else if (hook.path === 'twitch/chat' || hook.path === 'twitch/rewards' || hook.path === 'twitch/commands') {
+    } else if (apiKeyPaths.has(hook.path)) {
       all.push(app.channel('api-key'));
     }
     return all;

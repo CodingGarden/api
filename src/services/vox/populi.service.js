@@ -4,6 +4,7 @@ const { sub } = require('date-fns');
 
 const {
   twitchCommands,
+  youtubeCommands,
 } = require('../../db');
 
 const voxRegex = /^!(ask|idea|submit|comment|upvote)/;
@@ -15,6 +16,11 @@ class VoxPopuliService {
   constructor(app) {
     this.app = app;
     app.service('twitch/commands').on('created', (message) => {
+      if (message && message.message && message.message.match(eventRegex)) {
+        app.service('vox/populi').create(message);
+      }
+    });
+    app.service('youtube/commands').on('created', (message) => {
       if (message && message.message && message.message.match(eventRegex)) {
         app.service('vox/populi').create(message);
       }
@@ -36,7 +42,7 @@ class VoxPopuliService {
   }
 
   async getVox() {
-    const messages = await twitchCommands.find({
+    const query = {
       message: {
         $regex: voxRegex,
       },
@@ -52,13 +58,24 @@ class VoxPopuliService {
           days: 60,
         }),
       },
-    });
-    const names = [...new Set(messages.map((user) => user.username))];
-    const users = await this.app.service('twitch/users').find({
+    };
+    // TODO: show youtube commands in vox
+    const twitchMessages = await twitchCommands.find(query);
+    // const youtubeMessages = await youtubeCommands.find(query);
+    const messages = twitchMessages; // .concat(youtubeMessages);
+    const twitchNames = [...new Set(twitchMessages.map((message) => message.username))];
+    const twitchUsers = await this.app.service('twitch/users').find({
       query: {
-        names,
+        names: twitchNames,
       }
     });
+    // const youtubeIds = [...new Set(youtubeMessages.map((message) => message.author_id))];
+    // const youtubeUsers = await this.app.service('youtube/users').find({
+    //   query: {
+    //     ids: youtubeIds,
+    //   }
+    // });
+    const users = twitchUsers; // .concat(youtubeUsers);
     const questions = [];
     const ideas = [];
     const submissions = [];
@@ -113,13 +130,21 @@ class VoxPopuliService {
   }
 
   async remove(_id) {
-    const message = await twitchCommands.findOneAndUpdate({
+    const twitchMessage = await twitchCommands.findOneAndUpdate({
       _id,
     }, {
       $set: {
         archived: true,
       }
     });
+    const youtubeMessage = await youtubeCommands.findOneAndUpdate({
+      _id,
+    }, {
+      $set: {
+        archived: true,
+      }
+    });
+    const message = twitchMessage || youtubeMessage;
     if (message) {
       delete this.allByNum[message.num];
       this.data.questions = this.data.questions.filter((item) => item._id.toString() != _id);
@@ -131,9 +156,13 @@ class VoxPopuliService {
   }
 
   async patch(id, updates) {
-    const patched = await this.app
+    const twitchPatched = await this.app
       .service('twitch/commands')
       .patch(id, updates);
+    const youtubePatched = await this.app
+      .service('youtube/commands')
+      .patch(id, updates);
+    const patched = twitchPatched || youtubePatched;
     if (patched.num) {
       this.allByNum[patched.num] = patched;
     }
@@ -164,6 +193,7 @@ class VoxPopuliService {
         }
       } else if (command.match(/^!(comment|upvote)/)) {
         const num = (args.shift() || '').replace('#', '');
+        // eslint-disable-next-line no-restricted-globals
         if (num && !isNaN(num) && this.allByNum[num]) {
           if (command === '!comment') {
             message.content = args.join(' ');

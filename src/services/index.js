@@ -5,6 +5,7 @@ const MemberService = require('./youtube/members.service');
 const StatsService = require('./youtube/stats.service');
 const YouTubeChatService = require('./youtube/chat.service');
 const YouTubeUsersService = require('./youtube/youtube.users');
+const YouTubeCommandsService = require('./youtube/commands.service');
 const TwitchChatService = require('./twitch/chat.service');
 const VoxPopuliService = require('./vox/populi.service');
 const TwitchSubsService = require('./twitch/subs.service');
@@ -62,6 +63,15 @@ module.exports = function configure(app) {
       find: [verifyAPIKey],
       patch: [internalOnly],
       create: [internalOnly, (context) => context.event = null],
+    },
+  });
+  app.use('youtube/commands', new YouTubeCommandsService(app));
+  app.service('youtube/commands').hooks({
+    before: {
+      find: [verifyAPIKey],
+      patch: [verifyAPIKey],
+      create: [internalOnly],
+      remove: [internalOnly],
     },
   });
   app.use('youtube/stats', new StatsService(app));

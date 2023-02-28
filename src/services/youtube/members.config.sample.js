@@ -66,6 +66,8 @@ const request = {
 
 const clientScreenNonce = ''; // FILL ME IN
 
+const continuationToken = ''; // FILL ME IN
+
 const context = {
   client,
   request,
@@ -79,4 +81,5 @@ module.exports = {
   context,
   headers,
   referrer,
+  continuationToken,
 };

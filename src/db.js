@@ -8,6 +8,9 @@ youtubeChats.createIndex('id author_id author_display_name author_handle message
 const youtubeUsers = db.get('youtube-users');
 youtubeUsers.createIndex('id display_name handle');
 
+const youtubeCommands = db.get('youtube-commands');
+youtubeCommands.createIndex('id author_id author_display_name author_handle message live_chat_id');
+
 const twitchChats = db.get('twitch-chats');
 twitchChats.createIndex('username name userId id created_at message');
 
@@ -32,4 +35,5 @@ module.exports = {
   counter,
   youtubeChats,
   youtubeUsers,
+  youtubeCommands,
 };

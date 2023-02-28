@@ -6,6 +6,7 @@ const {
   context,
   headers,
   referrer,
+  continuationToken,
 } = require('./members.config');
 
 const studioBaseURL = 'https://studio.youtube.com/youtubei/v1';
@@ -193,7 +194,7 @@ async function getMemberData() {
     externalChannelId,
     sponsorsOptions: {
       pageSize: 100,
-      continuationToken: 'EgwI14nPnwYQyKK5qQEYAyIAKgYKBAgEEAE',
+      continuationToken,
       filter: {},
       order: {
         orderFields: [

@@ -13,6 +13,7 @@ module.exports = function channels(app) {
   const apiKeyPaths = new Set([
     'youtube/users',
     'youtube/chat',
+    'youtube/commands',
     'twitch/chat',
     'twitch/rewards',
     'twitch/commands'

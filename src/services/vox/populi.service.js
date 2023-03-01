@@ -43,6 +43,9 @@ class VoxPopuliService {
 
   async getVox() {
     const query = {
+      id: {
+        $ne: null,
+      },
       message: {
         $regex: voxRegex,
       },
@@ -61,27 +64,30 @@ class VoxPopuliService {
     };
     // TODO: show youtube commands in vox
     const twitchMessages = await twitchCommands.find(query);
-    // const youtubeMessages = await youtubeCommands.find(query);
-    const messages = twitchMessages; // .concat(youtubeMessages);
+    const youtubeMessages = await youtubeCommands.find(query);
+    const messages = twitchMessages.concat(youtubeMessages);
     const twitchNames = [...new Set(twitchMessages.map((message) => message.username))];
     const twitchUsers = await this.app.service('twitch/users').find({
       query: {
         names: twitchNames,
       }
     });
-    // const youtubeIds = [...new Set(youtubeMessages.map((message) => message.author_id))];
-    // const youtubeUsers = await this.app.service('youtube/users').find({
-    //   query: {
-    //     ids: youtubeIds,
-    //   }
-    // });
-    const users = twitchUsers; // .concat(youtubeUsers);
+    const youtubeIds = [...new Set(youtubeMessages.map((message) => message.author_id))];
+    const youtubeUsers = await this.app.service('youtube/users').find({
+      query: {
+        ids: youtubeIds,
+      }
+    });
+    const users = twitchUsers.concat(youtubeUsers);
     const questions = [];
     const ideas = [];
     const submissions = [];
     const upvotes = {};
     const comments = {};
     messages.forEach((message) => {
+      if (message.author_handle) {
+        message.platform = 'youtube';
+      }
       const args = (message.parsedMessage || message.message).split(' ');
       const command = args.shift();
       if (command.match(topLevelRegex)) {
@@ -106,7 +112,7 @@ class VoxPopuliService {
           comments[num].push(message);
         } else if (command === '!upvote') {
           upvotes[num] = upvotes[num] || [];
-          upvotes[num].push(message.username);
+          upvotes[num].push(message.author_handle || message.username);
           upvotes[num] = [...new Set(upvotes[num])];
         }
       }
@@ -178,18 +184,20 @@ class VoxPopuliService {
       const args = (message.parsedMessage || message.message).split(' ');
       const command = args.shift();
       if (command.match(/^!(ask|idea|submit)/) && message.num) {
-        const value = args.join(' ');
-        message.content = value;
-        message.comments = [];
-        message.upvotes = [];
-        message.upvote_count = 0;
-        this.allByNum[message.num] = message;
-        if (command === '!ask') {
-          this.data.questions.push(message);
-        } else if (command === '!idea') {
-          this.data.ideas.push(message);
-        } else if (command === '!submit') {
-          this.data.submissions.push(message);
+        if (!this.allByNum[message.num]) {
+          const value = args.join(' ');
+          message.content = value;
+          message.comments = [];
+          message.upvotes = [];
+          message.upvote_count = 0;
+          this.allByNum[message.num] = message;
+          if (command === '!ask') {
+            this.data.questions.push(message);
+          } else if (command === '!idea') {
+            this.data.ideas.push(message);
+          } else if (command === '!submit') {
+            this.data.submissions.push(message);
+          }
         }
       } else if (command.match(/^!(comment|upvote)/)) {
         const num = (args.shift() || '').replace('#', '');
@@ -199,7 +207,7 @@ class VoxPopuliService {
             message.content = args.join(' ');
             this.allByNum[num].comments.push(message);
           } else if (command === '!upvote') {
-            this.allByNum[num].upvotes.push(message.username);
+            this.allByNum[num].upvotes.push(message.author_handle || message.username);
             this.allByNum[num].upvotes = [...new Set(this.allByNum[num].upvotes)];
           }
         }

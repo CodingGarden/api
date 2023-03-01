@@ -70,7 +70,8 @@ module.exports = function createCommandService({
     }
 
     async create(message) {
-      const user = await getUserService(this.app).get(getUserQuery({ message }));
+      const user = message.user || await getUserService(this.app).get(getUserQuery({ message }));
+      delete message.user;
       const archiveQuestion = message.message.match(/^!archive\s+#?(\d+)$/);
       if (archiveQuestion) {
         const num = +archiveQuestion[1];
@@ -85,7 +86,10 @@ module.exports = function createCommandService({
       } else if (message.message.match(/^!(ask|idea|submit)/)) {
         const [, ...args] = message.message.split(' ');
         if (!args.join(' ').trim()) return;
-        const count = await counter.findOneAndUpdate({
+        const existing = await dbCollection.findOne({
+          id: message.id,
+        });
+        const count = existing ? { value: existing.num } : await counter.findOneAndUpdate({
           name: 'question',
         }, {
           $inc: { value: 1 }

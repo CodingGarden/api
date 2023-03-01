@@ -16,6 +16,7 @@ async function listenChatsSpecificVideo(videoId, app) {
         await Promise.all(items.map(async (item) => {
           if (item.snippet.type === 'textMessageEvent') {
             const message = {
+              id: item.id,
               author_id: item.authorDetails.channelId,
               author_display_name: item.authorDetails.displayName,
               author_handle: null,
@@ -24,12 +25,35 @@ async function listenChatsSpecificVideo(videoId, app) {
               deleted_at: null,
               live_chat_id: item.snippet.liveChatId,
             };
+            let user = {
+              id: item.authorDetails.channelId,
+              handle: null,
+              display_name: item.authorDetails.displayName,
+              logo: item.authorDetails.profileImageUrl,
+              created_at: new Date(),
+              updated_at: new Date(),
+              is_verified: item.authorDetails.isVerified,
+              is_chat_owner: item.authorDetails.isChatOwner,
+              is_chat_sponsor: item.authorDetails.isChatSponsor,
+              is_chat_moderator: item.authorDetails.isChatModerator,
+            };
+            try {
+              user = await app.service('youtube/users').get(item.authorDetails.channelId);
+            } catch (error) {
+              console.error(
+                'error requesting user...',
+                error.message,
+                item.authorDetails.channelId
+              );
+            }
+            message.author_handle = user.handle;
             if (message.message.match(/^!\w/)) {
               message.args = item.snippet.displayMessage.split(' ');
               message.command = message.args.shift().slice(1);
+              message.user = user;
               await youtubeCommandsService.create(message);
             } else {
-              await youtubeChatService.create({ message, item });
+              await youtubeChatService.create({ message, item, user });
             }
           }
         }));

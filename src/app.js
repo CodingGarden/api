@@ -54,7 +54,9 @@ app.configure(listenStreamlabs);
 
 app.use(middlewares.notFound);
 app.use((error, req, res, next) => {
-  console.error(error);
+  // console.error(error);
+  console.error(error.stack);
+  console.error(error.message);
   if (error.response && error.response.data) {
     console.error(JSON.stringify(error.response.data, null, 2));
   }

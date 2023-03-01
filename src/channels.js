@@ -19,9 +19,15 @@ module.exports = function channels(app) {
     'twitch/commands'
   ]);
 
+  const anonymousPaths = new Set([
+    'vox/populi',
+    'youtube/users',
+    'twitch/users',
+  ]);
+
   app.publish((data, hook) => {
     const all = [];
-    if (hook.path === 'vox/populi' || hook.path === 'twitch/users') {
+    if (anonymousPaths.has(hook.path)) {
       all.push(app.channel('anonymous'));
     } else if (apiKeyPaths.has(hook.path)) {
       all.push(app.channel('api-key'));

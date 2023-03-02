@@ -27,6 +27,7 @@ class GithubSponsorsService {
   async create(body, params) {
     console.log(JSON.stringify(body, null, 2));
     if (!verifySecret(params.rawBody, params.headers['x-hub-signature-256'])) { throw new Error('Invalid signature.'); }
+    this.data = this.data || (await getSponsors());
     const { monthlySponsors } = this.data;
     this.data = await getSponsors();
     const monthlySponsorLogins = new Set(monthlySponsors.map((s) => s.login));

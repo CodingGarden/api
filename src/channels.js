@@ -16,7 +16,8 @@ module.exports = function channels(app) {
     'youtube/commands',
     'twitch/chat',
     'twitch/rewards',
-    'twitch/commands'
+    'twitch/commands',
+    'github/sponsors',
   ]);
 
   const anonymousPaths = new Set([

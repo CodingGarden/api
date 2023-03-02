@@ -35,7 +35,7 @@ class GithubSponsorsService {
       };
       const { sponsorship } = body;
       info.amount = sponsorship.tier.monthly_price_in_cents;
-      info.private = sponsorship.privacy_level === 'PRIVATE';
+      info.private = sponsorship.privacy_level.toLowerCase() === 'private';
       if (sponsorship.tier.is_one_time) {
         info.is_one_time = true;
       }

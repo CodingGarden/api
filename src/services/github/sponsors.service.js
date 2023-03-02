@@ -25,17 +25,26 @@ class GithubSponsorsService {
   }
 
   async create(body, params) {
-    console.log(JSON.stringify(body, null, 2));
     if (!verifySecret(params.rawBody, params.headers['x-hub-signature-256'])) { throw new Error('Invalid signature.'); }
     this.data = this.data || (await getSponsors());
-    const { monthlySponsors } = this.data;
-    this.data = await getSponsors();
-    const monthlySponsorLogins = new Set(monthlySponsors.map((s) => s.login));
-    const newMonthly = this.data.monthlySponsors.find(
-      (sponsor) => !monthlySponsorLogins.has(sponsor.login)
-    );
-    // TODO: parse incoming body; alert on new one time sponsor
-    return newMonthly || { message: 'OK' };
+    if (body.action === 'created') {
+      const { sponsor } = body.sponsorship;
+      const info = {
+        login: sponsor.login,
+        avatarUrl: sponsor.avatarUrl,
+      };
+      const { sponsorship } = body;
+      info.amount = sponsorship.tier.monthly_price_in_cents;
+      info.private = sponsorship.privacy_level === 'PRIVATE';
+      if (sponsorship.tier.is_one_time) {
+        info.is_one_time = true;
+      }
+      return {
+        action: 'created',
+        info,
+      };
+    }
+    return { message: 'OK' };
   }
 }
 

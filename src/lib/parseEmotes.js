@@ -48,11 +48,14 @@ async function getFfzEmotes() {
   const appenderizer9000 = appendEmote(({
     name: code,
     urls
-  }) => ({
-    code,
-    source: 'FFZ',
-    url: `https:${Object.values(urls).pop()}`
-  }));
+  }) => {
+    const url = Object.values(urls).pop();
+    return {
+      code,
+      source: 'FFZ',
+      url: url.startsWith('http') ? url : `https:${url}`
+    };
+  });
   all.forEach(appenderizer9000);
 }
 

@@ -15,7 +15,7 @@ class TwitchService {
       },
       created_at: {
         $gte: sub(new Date(), {
-          hours: 12,
+          hours: 4,
         }),
       },
       ack: {
@@ -36,7 +36,7 @@ class TwitchService {
       sort: {
         created_at: -1,
       },
-      limit: params.query.limit || 1000,
+      limit: params.query.limit || 300,
     });
     return messages;
   }

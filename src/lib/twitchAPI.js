@@ -74,9 +74,21 @@ async function updateRedemption(redemption) {
   return data;
 }
 
+async function getChannelChatBadges(broadcaster_id) {
+  const { data: { data } } = await helixAPI.get(`/chat/badges?broadcaster_id=${broadcaster_id}`);
+  return data;
+}
+
+async function getGlobalChatBadges() {
+  const { data: { data } } = await helixAPI.get('/chat/badges/global');
+  return data;
+}
+
 module.exports = {
   getChannel,
   getChannelByUsername,
+  getGlobalChatBadges,
+  getChannelChatBadges,
   getStream,
   getTeam,
   getUserFollow,

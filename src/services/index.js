@@ -12,6 +12,7 @@ const TwitchSubsService = require('./twitch/subs.service');
 const TwitchUsersService = require('./twitch/users.service');
 const TwitchRewardsService = require('./twitch/rewards.service');
 const TwitchLoginService = require('./twitch/login.service');
+const TwitchBadgesService = require('./twitch/badges.service');
 const TwitchCommandsService = require('./twitch/commands.service');
 const IconsService = require('./icons/icons.service');
 const GithubSponsorsService = require('./github/sponsors.service');
@@ -113,6 +114,12 @@ module.exports = function configure(app) {
       find: [verifyAPIKey],
       patch: [internalOnly],
       create: [internalOnly, (context) => context.event = null],
+    },
+  });
+  app.use('twitch/badges', new TwitchBadgesService(app));
+  app.service('twitch/badges').hooks({
+    before: {
+      get: [verifyAPIKey],
     },
   });
   app.use('vox/populi', new VoxPopuliService(app));

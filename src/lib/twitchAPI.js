@@ -74,14 +74,28 @@ async function updateRedemption(redemption) {
   return data;
 }
 
+function formatBadgeResponse(data) {
+  return {
+    badge_sets: data.reduce((all, set) => {
+      all[set.set_id] = {
+        versions: set.versions.reduce((allVersions, version) => {
+          allVersions[version.id] = version;
+          return allVersions;
+        }, {}),
+      };
+      return all;
+    }, {}),
+  };
+}
+
 async function getChannelChatBadges(broadcaster_id) {
   const { data: { data } } = await helixAPI.get(`/chat/badges?broadcaster_id=${broadcaster_id}`);
-  return data;
+  return formatBadgeResponse(data);
 }
 
 async function getGlobalChatBadges() {
   const { data: { data } } = await helixAPI.get('/chat/badges/global');
-  return data;
+  return formatBadgeResponse(data);
 }
 
 module.exports = {

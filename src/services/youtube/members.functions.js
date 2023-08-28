@@ -234,6 +234,7 @@ async function getEmoji() {
 
 let moderators = null;
 async function getModerators(cache = true) {
+  return {};
   if (cache && moderators) return moderators;
   moderators = new Promise((resolve) => {
     (async () => {
@@ -269,6 +270,10 @@ const unitMap = {
 const plural = (value) => (value > 1 ? 's' : '');
 
 async function getMembers() {
+  return {
+    users: [],
+    usersById: {},
+  };
   const memberData = await getMemberData();
   const usersById = {};
   const users = memberData.map((member) => {

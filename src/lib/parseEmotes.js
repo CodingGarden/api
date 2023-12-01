@@ -60,7 +60,7 @@ async function getFfzEmotes() {
 }
 
 async function get7tvEmotes() {
-  const { data: globalEmotes } = await axios.get('https://api.7tv.app/v2/emotes/global');
+  const { data: globalEmotes } = await axios.get('https://7tv.io/v3/emote-sets/global');
   const { data: channelEmotes } = await axios.get(`https://api.7tv.app/v2/users/${process.env.TWITCH_CHANNEL_ID}/emotes`);
   const all = globalEmotes.concat(channelEmotes);
   const appenderizer9000 = appendEmote(({
@@ -78,9 +78,15 @@ async function getEmoteRegex() {
   if (!emoteRegex || (lastRequest && Date.now() - lastRequest > emoteTimeout)) {
     console.log('Refreshing BTTV, 7TV and FFZ cache...');
     await Promise.all([
-      getBttvEmotes(),
-      getFfzEmotes(),
-      get7tvEmotes(),
+      getBttvEmotes().catch((error) => {
+        console.log('Error loading BTTV emotes:', error);
+      }),
+      getFfzEmotes().catch((error) => {
+        console.log('Error loading FFZ emotes:', error);
+      }),
+      get7tvEmotes().catch((error) => {
+        console.log('Error loading 7TV emotes:', error);
+      }),
     ]);
     lastRequest = Date.now();
     regexStr = regexStr.slice(0, -1);

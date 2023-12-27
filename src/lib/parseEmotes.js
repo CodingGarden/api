@@ -61,15 +61,15 @@ async function getFfzEmotes() {
 
 async function get7tvEmotes() {
   const { data: globalEmotes } = await axios.get('https://7tv.io/v3/emote-sets/global');
-  const { data: channelEmotes } = await axios.get(`https://api.7tv.app/v2/users/${process.env.TWITCH_CHANNEL_ID}/emotes`);
-  const all = globalEmotes.concat(channelEmotes);
+  const { data: channelEmotes } = await axios.get(`https://7tv.io/v3/users/twitch/${process.env.TWITCH_CHANNEL_ID}`);
+  const all = globalEmotes.emotes.concat(channelEmotes.emote_set.emotes);
   const appenderizer9000 = appendEmote(({
     name: code,
-    urls
+    id
   }) => ({
     code,
     source: '7TV',
-    url: `${urls.pop()[1]}`
+    url: `https://cdn.7tv.app/emote/${id}/4x.webp`
   }));
   all.forEach(appenderizer9000);
 }
